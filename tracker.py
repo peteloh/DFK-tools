@@ -4,10 +4,53 @@ import pandas as pd
 user_address = "0xC2cfCDa0cd983C5E920E053F0985708c5e420f2F"
 rpc_address = "https://api.fuzz.fi"
 
-user_heroes = functions.get_users_heroes(user_address, rpc_address)
+#user_heroes = functions.get_users_heroes(user_address, rpc_address)
 
 # print(user_heroes)
 # print(len(user_heroes))
+
+# use manual hero id input
+user_heroes = [
+    43124,
+    52654,
+    57763,
+    59353,
+    62625,
+    63927,
+    65456,
+    67570,
+    68109,
+    70142,
+    70722,
+    71631,
+    72734,
+    73805,
+    78384,
+    79520,
+    80331,
+    80335,
+    81764,
+    83525,
+    88002,
+    89219,
+    92032,
+    99260,
+    101896,
+    106105,
+    108143,
+    108170,
+    110191,
+    111235,
+    111688,
+    112548,
+    114994,
+    116164,
+    116183,
+    116595,
+    117394,
+    117454,
+    117484
+]
 
 ideal_class_profession = {
     "warrior": "mining",
@@ -51,6 +94,7 @@ data = {
     "generation": [],
     "summons": [],
     "maxSummons": [],
+    "rarity" : [],
     "mainClass": [],
     "subClass": [],
     "profession": [],
@@ -69,6 +113,7 @@ for hero in user_heroes:
     data["generation"] += [details["info"]["generation"]]
     data["summons"] += [details["summoningInfo"]["summons"]]
     data["maxSummons"] += [details["summoningInfo"]["maxSummons"]]
+    data["rarity"] += [details["info"]["rarity"]]
     data["mainClass"] += [details["info"]["statGenes"]["class"]]
     data["subClass"] += [details["info"]["statGenes"]["subClass"]]
 
