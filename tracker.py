@@ -2,7 +2,7 @@ import functions
 import pandas as pd
 
 user_address = "0xC2cfCDa0cd983C5E920E053F0985708c5e420f2F"
-rpc_address = "https://api.fuzz.fi"
+rpc_address = "https://api.harmony.one"
 
 #user_heroes = functions.get_users_heroes(user_address, rpc_address)
 
@@ -26,7 +26,6 @@ user_heroes = [
     72734,
     73805,
     78384,
-    79520,
     80331,
     80335,
     81764,
@@ -92,16 +91,16 @@ short_stat = {
 data = {
     "heroId": [],
     "generation": [],
-    "summons": [],
+    "summonsLeft": [],
     "maxSummons": [],
     "rarity" : [],
     "mainClass": [],
     "subClass": [],
     "profession": [],
-    "statBoost1": [],
-    "statBoost2": [],
     "profStat1": [],
     "profStat2": [],
+    "stat1val": [],
+    "stat2val": [],
     "totalProfStats": [],
     "level": []
 }
@@ -111,8 +110,11 @@ for hero in user_heroes:
     details = functions.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
     data["heroId"] += [details["id"]]
     data["generation"] += [details["info"]["generation"]]
-    data["summons"] += [details["summoningInfo"]["summons"]]
-    data["maxSummons"] += [details["summoningInfo"]["maxSummons"]]
+
+    maxSummons = details["summoningInfo"]["maxSummons"]
+    data["summonsLeft"] += [maxSummons - details["summoningInfo"]["summons"]]
+    data["maxSummons"] += [maxSummons]
+
     data["rarity"] += [details["info"]["rarity"]]
     data["mainClass"] += [details["info"]["statGenes"]["class"]]
     data["subClass"] += [details["info"]["statGenes"]["subClass"]]
@@ -121,14 +123,17 @@ for hero in user_heroes:
     # print(profession)
     data["profession"] += [profession]
 
-    data["statBoost1"] += [short_stat[details["info"]["statGenes"]["statBoost1"]]]
-    data["statBoost2"] += [short_stat[details["info"]["statGenes"]["statBoost2"]]]
+    # data["statBoost1"] += [short_stat[details["info"]["statGenes"]["statBoost1"]]]
+    # data["statBoost2"] += [short_stat[details["info"]["statGenes"]["statBoost2"]]]
 
     prof_stats = ideal_professsion_stats[profession]
+    data["profStat1"] += [short_stat[prof_stats[0]]]
+    data["profStat2"] += [short_stat[prof_stats[1]]]
+
     profStat1_val = details["stats"][prof_stats[0]]
     profStat2_val = details["stats"][prof_stats[1]]
-    data["profStat1"] += [profStat1_val]
-    data["profStat2"] += [profStat2_val]
+    data["stat1val"] += [profStat1_val]
+    data["stat2val"] += [profStat2_val]
     data["totalProfStats"] += [profStat1_val + profStat2_val]
 
     data["level"] += [details["state"]["level"]]
@@ -139,3 +144,4 @@ for hero in user_heroes:
 df = pd.DataFrame(data=data)
 df.to_csv(f'./csv/hero_tracking.csv')
 
+print("completed!")
