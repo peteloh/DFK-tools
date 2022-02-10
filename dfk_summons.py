@@ -1,4 +1,4 @@
-import functions
+import hero_core
 import pandas as pd
 
 user_address = "0xC2cfCDa0cd983C5E920E053F0985708c5e420f2F"
@@ -35,6 +35,6 @@ data = {
     "level": []
 }
 
-raw_details1 = functions.get_hero(heroId_1, rpc_address)
-details1 = functions.human_readable_hero(raw_details1, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
+raw_details1 = hero_core.get_hero(heroId_1, rpc_address)
+details1 = hero_core.human_readable_hero(raw_details1, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
 print(details1)

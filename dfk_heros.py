@@ -1,4 +1,4 @@
-import functions
+import hero_core
 import pandas as pd
 
 user_address = "0xC2cfCDa0cd983C5E920E053F0985708c5e420f2F"
@@ -106,7 +106,7 @@ data = {
 }
 
 for hero in user_heroes:
-    raw_details = functions.get_hero(hero, rpc_address)
+    raw_details = hero_core.get_hero(hero, rpc_address)
     details = functions.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
     data["heroId"] += [details["id"]]
     data["generation"] += [details["info"]["generation"]]
