@@ -69,16 +69,11 @@ def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
-st.set_page_config(
-            page_title="dfk tools",
-            layout='wide'
-    )
-
 def app():
 
     st.header('My Heroes')
 
-    col1, col2 = st.columns((1,2))
+    col1, col2 = st.columns((1,1))
     n_wallets = col1.number_input('Number of wallets to track', min_value=1, value=1)
     user_addresses = []
 
@@ -146,7 +141,6 @@ def app():
         
         df = pd.DataFrame(data=data)
         st.dataframe(df,height=3000)
-
 
         csv = convert_df(df)
         filename = "dfk_heroes.csv"
