@@ -1,5 +1,5 @@
 import streamlit as st
-import functions
+import hero_core
 import numpy as np
 import pandas as pd
 
