@@ -13,6 +13,31 @@ class hero:
         raw_details = hero_core.get_hero(heroId, rpc_address)
         self.details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
     
+    def get_stats(self, details):
+        data = {}
+        data["ID"] = [details["id"]]
+        data["Gen"] = [details["info"]["generation"]]
+        data["Level"] = [details["state"]["level"]]
+        maxSummons = details["summoningInfo"]["maxSummons"]
+        data["SumLeft"] = [maxSummons - details["summoningInfo"]["summons"]]
+        data["SumMax"] = [maxSummons]
+        data["Rarity"] = [details["info"]["rarity"]]
+        data["Class"] = [details["info"]["statGenes"]["class"]]
+        data["SubClass"] = [details["info"]["statGenes"]["subClass"]]
+        profession = details["info"]["statGenes"]["profession"]
+        data["Prof"] = [profession]
+
+        prof_stats = utils.ideal_professsion_stats(profession)
+        data["ProfStat1"] = [utils.short_stat(prof_stats[0])]
+        data["ProfStat2"] = [utils.short_stat(prof_stats[1])]
+        profStat1_val = details["stats"][prof_stats[0]]
+        profStat2_val = details["stats"][prof_stats[1]]
+        data["ValStat1"] = [profStat1_val]
+        data["ValStat2"] = [profStat2_val]
+        data["GreenStat"] = [utils.short_stat(details["info"]["statGenes"]["statBoost1"])]
+        data["BlueStat"] = [utils.short_stat(details["info"]["statGenes"]["statBoost2"])]
+        self.stats = data
+
     def genes_df(self, d0, r1, r2, r3):
         D0 =  ["D0", d0["class"], d0["subClass"], d0["profession"], d0["statBoost1"], d0["statBoost2"]]
         R1 =  ["R1", r1["class"], r1["subClass"], r1["profession"], r1["statBoost1"], r1["statBoost2"]]
@@ -154,6 +179,8 @@ class summon:
             self.statBoost[utils.short_stat(hero1_statBoost2)][1] += 0.5 * weighting[i]
             self.statBoost[utils.short_stat(hero2_statBoost2)][1] += 0.5 * weighting[i]
 
+def df_to_table(df):
+    pass
 
 def app():
 
@@ -169,6 +196,57 @@ def app():
         offspring = summon()
         cantBorn = offspring.check_same_grandparents(hero1, hero2)
 
+        hero1.get_stats(hero1.details)
+        hero2.get_stats(hero2.details)
+        
+    with st.container():
+        col1, col2, col5, col6 = st.columns((1,1,1,1))
+
+        col1.text("Hero ID")
+        col2.text(str(hero1.stats["ID"][0]))
+        col5.text("Hero ID")
+        col6.text(str(hero2.stats["ID"][0]))
+
+        col1.text("Generation")
+        col2.text(str(hero1.stats["Gen"][0]))
+        col5.text("Generation")
+        col6.text(str(hero2.stats["Gen"][0]))
+
+        col1.text("Summons")
+        col2.text(str(hero1.stats["SumLeft"][0]) + "/" + str(hero1.stats["SumMax"][0]))
+        col5.text("Summons")
+        col6.text(str(hero2.stats["SumLeft"][0]) + "/" + str(hero2.stats["SumMax"][0]))
+
+        col1.text("Rarity")
+        col2.text(str(hero1.stats["Rarity"][0]))
+        col5.text("Rarity")
+        col6.text(str(hero2.stats["Rarity"][0]))
+
+        col1.text("Class")
+        col2.text(str(hero1.stats["Class"][0]))
+        col5.text("Class")
+        col6.text(str(hero2.stats["Class"][0]))
+
+        col1.text("SubClass")
+        col2.text(str(hero1.stats["SubClass"][0]))
+        col5.text("SubClass")
+        col6.text(str(hero2.stats["SubClass"][0]))
+
+        col1.text("Profession")
+        col2.text(str(hero1.stats["Prof"][0]))
+        col5.text("Profession")
+        col6.text(str(hero2.stats["Prof"][0]))
+
+        col1.text("GreenStat")
+        col2.text(str(hero1.stats["GreenStat"][0]))
+        col5.text("GreenStat")
+        col6.text(str(hero2.stats["GreenStat"][0]))
+
+        col1.text("BlueStat")
+        col2.text(str(hero1.stats["BlueStat"][0]))
+        col5.text("BlueStat")
+        col6.text(str(hero2.stats["BlueStat"][0]))
+    
     
     if st.button('Search'):
 
@@ -194,21 +272,76 @@ def app():
         with st.container():
 
             st.header("Probability")
-            col1, col2 = st.columns((1,1)) 
             offspring.calculate_genes_probability(df1,df2)
+            
+            col1, col2, col3, col4, col5, col6, col7, col8 = st.columns((1,1,1,1,1,1,1,1)) 
+            col1.markdown("**Classes**")
+            col2.markdown("**MainClass**")
+            col3.markdown("**SubClass**")
 
             df3 = pd.DataFrame.from_dict(data=offspring.hero_class, orient='index', columns=['MainClass', 'SubClass'])
-            df4 = pd.DataFrame.from_dict(data=offspring.hero_profession, orient='index', columns=['Profession'])
-            df5 = pd.DataFrame.from_dict(data=offspring.statBoost, orient='index', columns=['GreenStat', 'BlueStat'])
+            df3_array = df3.to_numpy() * 100
+
+            for key in offspring.hero_class.keys():
+                col1.text(str(key))
+
+            for i in range(len(df3_array)):
+                if df3_array[i,0] == 0: col2.text("-")
+                else: col2.text(str(round(df3_array[i,0],2))+"%")
+                if df3_array[i,1] == 0: col3.text("-")
+                else: col3.text(str(round(df3_array[i,1],2))+"%")
             
-            col1.markdown("**Class**")
-            col1.dataframe(df3.style.format(subset=['MainClass', 'SubClass'], formatter="{:.2%}"), height=1500)
+            col5.markdown("**StatBoost**")
+            col6.markdown("**GreenStat**")
+            col7.markdown("**BlueStat**")
 
-            col2.markdown("**StatBoost**")
-            col2.dataframe(df5.style.format(subset=['GreenStat', 'BlueStat'], formatter="{:.2%}"), height=1500)
+            df4 = pd.DataFrame.from_dict(data=offspring.statBoost, orient='index', columns=['GreenStat', 'BlueStat'])
+            df4_array = df4.to_numpy() * 100
 
-            col2.markdown("**Profession**")
-            col2.dataframe(df4.style.format(subset=['Profession'], formatter="{:.2%}"), height=1500)
+            for key in offspring.statBoost.keys():
+                col5.text(str(key))
+            
+            for i in range(len(df4_array)):
+                if df4_array[i,0] == 0: col6.text("-")
+                else: col6.text(str(round(df3_array[i,0],2))+"%")
+                if df4_array[i,1] == 0: col7.text("-")
+                else: col7.text(str(round(df3_array[i,1],2))+"%")
+            
+
+            col5.markdown("**Profession**")
+            col6.markdown("**Chances**")
+
+            df5 = pd.DataFrame.from_dict(data=offspring.hero_profession, orient='index', columns=['Profession'])
+            df5_array = df5.to_numpy() * 100
+
+            for key in offspring.hero_profession.keys():
+                col5.text(str(key))
+            for i in range(len(df5_array)):
+                if df5_array[i,0] == 0: col6.text("-")
+                else: col6.text(str(round(df5_array[i,0],2))+"%")
+
+            
+            # col5.markdown("**StatBoost**")
+            # col6.write("GreenStat")
+            # col7.write("BlueStat")
+
+            # col1.text(offspring.hero_class[0][])
+            # col2.text(df3[0,1])
+            # col3.text(df3[0,2])
+            # col5.text("**StatBoost**")
+            # col6.text("GreenStat")
+            # col7.text("BlueStat")
+
+
+
+            # col1.markdown("**Class**")
+            # col1.dataframe(df3.style.format(subset=['MainClass', 'SubClass'], formatter="{:.2%}"), height=1500)
+
+            # col2.markdown("**StatBoost**")
+            # col2.dataframe(df5.style.format(subset=['GreenStat', 'BlueStat'], formatter="{:.2%}"), height=1500)
+
+            # col2.markdown("**Profession**")
+            # col2.dataframe(df4.style.format(subset=['Profession'], formatter="{:.2%}"), height=1500)
 
             with st.container():
 
