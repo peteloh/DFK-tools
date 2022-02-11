@@ -257,3 +257,47 @@ def human_readable_auction(auction):
     human_readable['open'] = auction[7]
 
     return human_readable
+
+
+# Personal Utils
+def short_stat(stat):
+    short_stat = {
+        "agility": "AGI",
+        "strength": "STR",
+        "endurance": "END",
+        "luck": "LCK",
+        "dexterity": "DEX",
+        "wisdom": "WIS",
+        "intelligence": "INT",
+        "vitality": "VIT"
+    }
+    return short_stat[stat]
+
+def ideal_professsion_stats(profession):
+    ideal_professsion_stats = {
+        "mining": ["strength", "endurance"],
+        "gardening": ["wisdom", "vitality"],
+        "foraging": ["intelligence", "dexterity"],
+        "fishing": ["agility", "luck"]
+    }
+    return ideal_professsion_stats[profession]
+
+def ideal_class_profession(mainClass):
+    ideal_class_profession = {
+        "warrior": "mining",
+        "knight": "mining",
+        "archer": "foraging",
+        "thief": "fishing",
+        "pirate": "mining",
+        "monk": "mining",
+        "wizard": "gardening",
+        "priest": "gardening",
+        "paladin": "mining",
+        "darkknight": "mining",
+        "ninja": "fishing",
+        "summoner": "gardening",
+        "dragoon": "mining",
+        "sage": "gardening",
+        "dreadknight": "mining"
+    }
+    return ideal_class_profession[mainClass]

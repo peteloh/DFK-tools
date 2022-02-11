@@ -17,8 +17,8 @@ st.set_page_config(
 st.sidebar.header("Defi Kingdoms Tools")
 
 # Add all your applications (pages) here
-app.add_page("Heros Tracker", tool1_heroes.app)
 app.add_page("Summoning Guru", tool2_summons.app)
+app.add_page("Heros Tracker", tool1_heroes.app)
 
 # The main app
 app.run()

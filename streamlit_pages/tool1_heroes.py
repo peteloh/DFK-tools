@@ -5,46 +5,20 @@ import matplotlib.pyplot as pl
 # custom imports
 import hero_core
 import auction_core
-import pandas as pd
+import utils
 from dfk_contracts import serendale_contracts
 
-ideal_class_profession = {
-    "warrior": "mining",
-    "knight": "mining",
-    "archer": "foraging",
-    "thief": "fishing",
-    "pirate": "mining",
-    "monk": "mining",
-    "wizard": "gardening",
-    "priest": "gardening",
-    "paladin": "mining",
-    "darkknight": "mining",
-    "ninja": "fishing",
-    "summoner": "gardening",
-    "dragoon": "mining",
-    "sage": "gardening",
-    "dreadknight": "mining"
-}
+auction_address = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
+rpc_address = "https://api.harmony.one"
 
-ideal_professsion_stats = {
-    "mining": ["strength", "endurance"],
-    "gardening": ["wisdom", "vitality"],
-    "foraging": ["intelligence", "dexterity"],
-    "fishing": ["agility", "luck"]
-}
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
 
-short_stat = {
-    "agility": "AGI",
-    "strength": "STR",
-    "endurance": "END",
-    "luck": "LCK",
-    "dexterity": "DEX",
-    "wisdom": "WIS",
-    "intelligence": "INT",
-    "vitality": "VIT"
-}
+def app():
 
-data = {
+    data = {
     "ID": [],
     "Gen": [],
     "SumLeft": [],
@@ -59,17 +33,7 @@ data = {
     "ValStat2": [],
     "SumStats": [],
     "Level": []
-}
-
-auction_address = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
-rpc_address = "https://api.harmony.one"
-
-@st.cache
-def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv().encode('utf-8')
-
-def app():
+    }
 
     st.header('My Heroes')
 
@@ -83,7 +47,6 @@ def app():
         else: user_addresses += [col1.text_input('0x Wallet {} Address'.format(i+1), value="")]
     
     if col1.button('Search'):
-
         if len(user_addresses) == 1:
             user_heroes_in_wallet = hero_core.get_users_heroes(user_addresses[0], rpc_address)
             user_heroes_in_auctions = auction_core.get_user_auctions(auction_address, user_addresses[0], rpc_address)
@@ -95,7 +58,6 @@ def app():
                 user_heroes += auction_core.get_user_auctions(auction_address, user_addresses[i], rpc_address)
 
         user_heroes = sorted(user_heroes)
-
         count = 0
 
         pg_bar_holder = col1.empty()
@@ -103,8 +65,10 @@ def app():
 
         for hero in user_heroes:
             count+=1
+            
             percentage = count / len(user_heroes)
             pg_bar_holder.progress(percentage)
+
             raw_details = hero_core.get_hero(hero, rpc_address)
             details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
             data["ID"] += [details["id"]]
@@ -119,15 +83,11 @@ def app():
             data["SubClass"] += [details["info"]["statGenes"]["subClass"]]
 
             profession = details["info"]["statGenes"]["profession"]
-            # print(profession)
             data["Prof"] += [profession]
 
-            # data["statBoost1"] += [short_stat[details["info"]["statGenes"]["statBoost1"]]]
-            # data["statBoost2"] += [short_stat[details["info"]["statGenes"]["statBoost2"]]]
-
-            prof_stats = ideal_professsion_stats[profession]
-            data["ProfStat1"] += [short_stat[prof_stats[0]]]
-            data["ProfStat2"] += [short_stat[prof_stats[1]]]
+            prof_stats = utils.ideal_professsion_stats(profession)
+            data["ProfStat1"] += [utils.short_stat(prof_stats[0])]
+            data["ProfStat2"] += [utils.short_stat(prof_stats[1])]
 
             profStat1_val = details["stats"][prof_stats[0]]
             profStat2_val = details["stats"][prof_stats[1]]
@@ -138,7 +98,6 @@ def app():
             data["Level"] += [details["state"]["level"]]
 
         pg_bar_holder.empty() 
-        
         df = pd.DataFrame(data=data)
         st.dataframe(df,height=3000)
 
