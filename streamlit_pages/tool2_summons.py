@@ -151,8 +151,8 @@ class summon:
 
             statBoost2 = df1.loc[:,"BlueStat"][i]
             statBoost2 = df2.loc[:,"BlueStat"][i]
-            self.statBoost[utils.short_stat(statBoost1)][1] += 0.5 * weighting[i]
-            self.statBoost[utils.short_stat(statBoost1)][1] += 0.5 * weighting[i]
+            self.statBoost[utils.short_stat(statBoost2)][1] += 0.5 * weighting[i]
+            self.statBoost[utils.short_stat(statBoost2)][1] += 0.5 * weighting[i]
 
 
 def app():
