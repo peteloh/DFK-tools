@@ -71,7 +71,7 @@ def unweighted_class_chances(class1, class2):
             p[class2] = 0.5
     return p
 
-class probabilities:       
+class summon:       
     def __init__(self):
         self.hero_class = {
             "warrior": [0,0],
@@ -107,6 +107,12 @@ class probabilities:
             "INT": [0,0]
         }
 
+    def check_same_grandparents(self, hero1, hero2):
+        hero1_parents = [hero1.details['summoningInfo']['summonerId'], hero1.details['summoningInfo']['assistantId']]
+        hero2_parents = [hero2.details['summoningInfo']['summonerId'], hero2.details['summoningInfo']['assistantId']]
+        return (hero1_parents[0] in hero2_parents) and (hero1_parents[1] in hero2_parents)
+        
+
     def calculate_genes_probability(self, df1, df2):
         total_main = 0
         total_sub = 0
@@ -128,7 +134,6 @@ class probabilities:
 
             
             p_subClass = unweighted_class_chances(df1.loc[:,"SubClass"][i],df2.loc[:,"SubClass"][i])
-            st.write(p_subClass)
             for key in p_subClass.keys():
                 self.hero_class[key][1] += p_subClass[key] * weighting[i]
                 total_sub += p_subClass[key] * weighting[i]
@@ -148,23 +153,29 @@ class probabilities:
             statBoost2 = df2.loc[:,"BlueStat"][i]
             self.statBoost[utils.short_stat(statBoost1)][1] += 0.5 * weighting[i]
             self.statBoost[utils.short_stat(statBoost1)][1] += 0.5 * weighting[i]
-        
-        st.write("total probability")
-        st.write(total_main)
-        st.write(total_sub)
 
-            
+
 def app():
 
-    st.header('Summoning Guru')
-    r1col1, r1col2, r1col3, r1col4 = st.columns((1,1,1,1))
-    hero_id1 = int(r1col1.text_input('Hero 1', value=118630))
-    hero_id2 = int(r1col2.text_input('Hero 2', value=105293))
+    st.title('Summoning Guru')
 
-    r2col1, r2col2 = st.columns((1,1))
-    if r1col1.button('Search'):
+    with st.container():
+        col1, col2 = st.columns((1,1))
+        hero_id1 = int(col1.text_input('Hero 1', value=118630))
+        hero_id2 = int(col2.text_input('Hero 2', value=105293))
 
         hero1 = hero(hero_id1, rpc_address)
+        hero2 = hero(hero_id2, rpc_address)
+        offspring = summon()
+        cantBorn = offspring.check_same_grandparents(hero1, hero2)
+
+    
+    if st.button('Search'):
+
+        if cantBorn == True:
+            st.write("Both heroes have the same parents, please try a different pair of heroes.")
+            return
+
         df1 = hero1.genes_df(
             hero1.details['info']['statGenes'],
             hero1.details['info']['statGenes']['r1'],
@@ -172,7 +183,6 @@ def app():
             hero1.details['info']['statGenes']['r3']
         )
 
-        hero2 = hero(hero_id2, rpc_address)
         df2 = hero2.genes_df(
             hero2.details['info']['statGenes'],
             hero2.details['info']['statGenes']['r1'],
@@ -180,33 +190,48 @@ def app():
             hero2.details['info']['statGenes']['r3']
         )
 
-        r2col1.subheader("Hero 1 Genes")
-        r2col1.write(df1)
-
-        r2col2.subheader("Hero 2 Genes")
-        r2col2.write(df2)
-
-        r3col1, r3col2 = st.columns((1,1)) 
-        offspring = probabilities()
-        offspring.calculate_genes_probability(df1,df2)
-
-        df3 = pd.DataFrame.from_dict(data=offspring.hero_class, orient='index', columns=['MainClass', 'SubClass'])
-
-        r3col1.subheader("Offspring Class Probabilities")
-        r3col1.dataframe(df3.style.format(subset=['MainClass', 'SubClass'], formatter="{:.2%}"), height=1500)
-
         
+        with st.container():
 
-    
-    st.markdown("""
+            st.header("Probability")
+            col1, col2 = st.columns((1,1)) 
+            offspring.calculate_genes_probability(df1,df2)
 
-    **Calculation Details** \n
-    1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
-    2. Weighting of each genes: 
-        D0 - 75%
-        R1 - 18.75%
-        R2 - 4.6875%
-        R3 - 1.5625%
-    3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight
-    """)
+            df3 = pd.DataFrame.from_dict(data=offspring.hero_class, orient='index', columns=['MainClass', 'SubClass'])
+            df4 = pd.DataFrame.from_dict(data=offspring.hero_profession, orient='index', columns=['Profession'])
+            df5 = pd.DataFrame.from_dict(data=offspring.statBoost, orient='index', columns=['GreenStat', 'BlueStat'])
+            
+            col1.markdown("**Class**")
+            col1.dataframe(df3.style.format(subset=['MainClass', 'SubClass'], formatter="{:.2%}"), height=1500)
+
+            col2.markdown("**StatBoost**")
+            col2.dataframe(df5.style.format(subset=['GreenStat', 'BlueStat'], formatter="{:.2%}"), height=1500)
+
+            col2.markdown("**Profession**")
+            col2.dataframe(df4.style.format(subset=['Profession'], formatter="{:.2%}"), height=1500)
+
+            with st.container():
+
+                st.header("Parent Genes")
+
+                col1, col2 = st.columns((1,1))
+                col1.markdown("**Hero 1 Genes**")
+                col1.write(df1)
+
+                col2.markdown("**Hero 2 Genes**")
+                col2.write(df2)
+
+            with st.container():
+
+                st.header("\nCalculation Details")
+
+                st.markdown("""
+                1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
+                2. Weighting of each genes: 
+                    D0 - 75%
+                    R1 - 18.75%
+                    R2 - 4.6875%
+                    R3 - 1.5625%
+                3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight
+                """)
 

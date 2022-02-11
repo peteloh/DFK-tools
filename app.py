@@ -14,7 +14,12 @@ st.set_page_config(
     )
 
 # Title of the main page
-st.sidebar.header("Defi Kingdoms Tools")
+
+col1, col2 = st.sidebar.columns((4,9))
+
+col2.image("./images/jewel_icon.png")
+
+st.sidebar.title("DFK Tools")
 
 # Add all your applications (pages) here
 app.add_page("Summoning Guru", tool2_summons.app)
@@ -22,6 +27,42 @@ app.add_page("Heros Tracker", tool1_heroes.app)
 
 # The main app
 app.run()
+
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+# st.sidebar.text("")
+st.sidebar.text("")
+
+st.sidebar.markdown("Made by Pete Loh")
 
     
     
