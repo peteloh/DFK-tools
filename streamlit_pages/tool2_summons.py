@@ -275,6 +275,7 @@ def app():
             offspring.calculate_genes_probability(df1,df2)
             
             col1, col2, col3, col4, col5, col6, col7, col8 = st.columns((1,1,1,1,1,1,1,1)) 
+
             col1.markdown("**Classes**")
             col2.markdown("**MainClass**")
             col3.markdown("**SubClass**")
@@ -290,7 +291,7 @@ def app():
                 else: col2.text(str(round(df3_array[i,0],2))+"%")
                 if df3_array[i,1] == 0: col3.text("-")
                 else: col3.text(str(round(df3_array[i,1],2))+"%")
-            
+
             col5.markdown("**StatBoost**")
             col6.markdown("**GreenStat**")
             col7.markdown("**BlueStat**")
@@ -303,10 +304,13 @@ def app():
             
             for i in range(len(df4_array)):
                 if df4_array[i,0] == 0: col6.text("-")
-                else: col6.text(str(round(df3_array[i,0],2))+"%")
+                else: col6.text(str(round(df4_array[i,0],2))+"%")
                 if df4_array[i,1] == 0: col7.text("-")
-                else: col7.text(str(round(df3_array[i,1],2))+"%")
+                else: col7.text(str(round(df4_array[i,1],2))+"%")
             
+            col5.markdown("____________________________________________________________")
+            col6.markdown("____________________________________________________________")
+            col7.markdown("____________________________________________________________")
 
             col5.markdown("**Profession**")
             col6.markdown("**Chances**")
@@ -319,7 +323,7 @@ def app():
             for i in range(len(df5_array)):
                 if df5_array[i,0] == 0: col6.text("-")
                 else: col6.text(str(round(df5_array[i,0],2))+"%")
-
+        
             
             # col5.markdown("**StatBoost**")
             # col6.write("GreenStat")
