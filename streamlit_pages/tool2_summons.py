@@ -144,15 +144,15 @@ class summon:
             profession2 = df2.loc[:,"Prof"][i]
             self.hero_profession[profession2] += 0.5 * weighting[i]
 
-            statBoost1 = df1.loc[:,"GreenStat"][i]
-            statBoost1 = df2.loc[:,"GreenStat"][i]
-            self.statBoost[utils.short_stat(statBoost1)][0] += 0.5 * weighting[i]
-            self.statBoost[utils.short_stat(statBoost1)][0] += 0.5 * weighting[i]
+            hero1_statBoost1 = df1.loc[:,"GreenStat"][i]
+            hero2_statBoost1 = df2.loc[:,"GreenStat"][i]
+            self.statBoost[utils.short_stat(hero1_statBoost1)][0] += 0.5 * weighting[i]
+            self.statBoost[utils.short_stat(hero2_statBoost1)][0] += 0.5 * weighting[i]
 
-            statBoost2 = df1.loc[:,"BlueStat"][i]
-            statBoost2 = df2.loc[:,"BlueStat"][i]
-            self.statBoost[utils.short_stat(statBoost2)][1] += 0.5 * weighting[i]
-            self.statBoost[utils.short_stat(statBoost2)][1] += 0.5 * weighting[i]
+            hero1_statBoost2 = df1.loc[:,"BlueStat"][i]
+            hero2_statBoost2 = df2.loc[:,"BlueStat"][i]
+            self.statBoost[utils.short_stat(hero1_statBoost2)][1] += 0.5 * weighting[i]
+            self.statBoost[utils.short_stat(hero2_statBoost2)][1] += 0.5 * weighting[i]
 
 
 def app():
