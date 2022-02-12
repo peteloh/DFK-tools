@@ -139,45 +139,41 @@ class summon:
         
 
     def calculate_genes_probability(self, df1, df2):
-        total_main = 0
-        total_sub = 0
-        for i in range(4):  #D0, R1, R2, R3
+        weighting = [
+            0.75,       
+            0.1875, 
+            0.046875,   
+            0.015625
+        ]
 
-            weighting = [
-                0.75,       
-                0.1875, 
-                0.046875,   
-                0.015625
-            ]
+        for i in range(4):  # Hero1 D0, R1, R2, R3
+            for j in range(4): # Hero2 D0, R1, R2, R3
+                
+                p_mainClass = unweighted_class_chances(df1.loc[:,"Class"][i],df2.loc[:,"Class"][j])
+                p_subClass = unweighted_class_chances(df1.loc[:,"SubClass"][i],df2.loc[:,"SubClass"][j])
 
-            p_mainClass = unweighted_class_chances(df1.loc[:,"Class"][i],df2.loc[:,"Class"][i])
+                for key in p_mainClass.keys():
+                    self.hero_class[key][0] += p_mainClass[key] * weighting[i] * weighting[j]
+                
+                p_subClass = unweighted_class_chances(df1.loc[:,"SubClass"][i],df2.loc[:,"SubClass"][i])
+                for key in p_subClass.keys():
+                    self.hero_class[key][1] += p_subClass[key] * weighting[i] * weighting[j]
 
-            
-            for key in p_mainClass.keys():
-                total_main += p_mainClass[key] * weighting[i]
-                self.hero_class[key][0] += p_mainClass[key] * weighting[i]
+                profession1 = df1.loc[:,"Prof"][i]
+                profession2 = df2.loc[:,"Prof"][j]
+                self.hero_profession[profession1] += 0.5 * weighting[i] * weighting[j]
+                self.hero_profession[profession2] += 0.5 * weighting[i] * weighting[j]
 
-            
-            p_subClass = unweighted_class_chances(df1.loc[:,"SubClass"][i],df2.loc[:,"SubClass"][i])
-            for key in p_subClass.keys():
-                self.hero_class[key][1] += p_subClass[key] * weighting[i]
-                total_sub += p_subClass[key] * weighting[i]
-            
-            profession1 = df1.loc[:,"Prof"][i]
-            self.hero_profession[profession1] += 0.5 * weighting[i]
+                hero1_statBoost1 = df1.loc[:,"GreenStat"][i]
+                hero2_statBoost1 = df2.loc[:,"GreenStat"][j]
+                self.statBoost[utils.short_stat(hero1_statBoost1)][0] += 0.5 * weighting[i] * weighting[j]
+                self.statBoost[utils.short_stat(hero2_statBoost1)][0] += 0.5 * weighting[i] * weighting[j]
 
-            profession2 = df2.loc[:,"Prof"][i]
-            self.hero_profession[profession2] += 0.5 * weighting[i]
-
-            hero1_statBoost1 = df1.loc[:,"GreenStat"][i]
-            hero2_statBoost1 = df2.loc[:,"GreenStat"][i]
-            self.statBoost[utils.short_stat(hero1_statBoost1)][0] += 0.5 * weighting[i]
-            self.statBoost[utils.short_stat(hero2_statBoost1)][0] += 0.5 * weighting[i]
-
-            hero1_statBoost2 = df1.loc[:,"BlueStat"][i]
-            hero2_statBoost2 = df2.loc[:,"BlueStat"][i]
-            self.statBoost[utils.short_stat(hero1_statBoost2)][1] += 0.5 * weighting[i]
-            self.statBoost[utils.short_stat(hero2_statBoost2)][1] += 0.5 * weighting[i]
+                hero1_statBoost2 = df1.loc[:,"BlueStat"][i]
+                hero2_statBoost2 = df2.loc[:,"BlueStat"][j]
+                self.statBoost[utils.short_stat(hero1_statBoost2)][1] += 0.5 * weighting[i] * weighting[j]
+                self.statBoost[utils.short_stat(hero2_statBoost2)][1] += 0.5 * weighting[i] * weighting[j]
+        
 
 def df_to_table(df):
     pass
