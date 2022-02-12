@@ -9,5 +9,7 @@ Tools:
   - input 2 hero ids
   - track the probability of offspring traits: class, subclass, profession, bluestats, greenstats.
  
- Currently not hosted on a website. To run locally, clone this repo and type in terminal "streamlit run app.py"
+How to use:
+- Clone this repo and type in terminal "streamlit run app.py"
+- or open prototype: https://share.streamlit.io/peteloh/dfk-tools/main/app.py (this method only supports low traffic)
  
