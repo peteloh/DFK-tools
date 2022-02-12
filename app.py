@@ -2,7 +2,7 @@ import streamlit as st
 
 # Custom imports 
 from streamlit_multipage import MultiPage
-from streamlit_pages import tool1_heroes, tool2_summons # import your pages here
+from sub_applications import tool1_heroes, tool2_summons # import your pages here
 
 # Create an instance of the app 
 

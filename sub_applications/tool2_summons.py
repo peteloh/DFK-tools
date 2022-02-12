@@ -3,8 +3,7 @@ import numpy as np
 import pandas as pd
 
 # custom imports
-import hero_core
-import utils
+from core import hero_core, utils
 
 rpc_address = "https://api.harmony.one"
 

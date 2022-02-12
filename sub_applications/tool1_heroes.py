@@ -3,10 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as pl
 
 # custom imports
-import hero_core
-import auction_core
-import utils
-from dfk_contracts import serendale_contracts
+from core import hero_core, auction_core, utils
+from core.dfk_contracts import serendale_contracts
 
 auction_address = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
 rpc_address = "https://api.harmony.one"
