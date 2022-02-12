@@ -2,7 +2,7 @@
 
 import copy
 from web3 import Web3
-import utils as hero_utils
+import core.utils as hero_utils
 
 CONTRACT_ADDRESS = '0x5f753dcdf9b1ad9aabc1346614d1f4746fd6ce5c'
 
