@@ -23,12 +23,10 @@ st.sidebar.title("DFK Tools")
 
 # Add all your applications (pages) here
 app.add_page("Summoning Guru", tool2_summons.app)
-app.add_page("Heros Tracker", tool1_heroes.app)
+app.add_page("Heroes Tracker", tool1_heroes.app)
 
 # The main app
 app.run()
-
-st.sidebar.text("")
 
 st.sidebar.markdown("Made by Pete Loh")
 
