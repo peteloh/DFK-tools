@@ -121,7 +121,9 @@ def app():
             col2.markdown("**Hero Sold**")
             col3.markdown("**New Hero**")
 
-            if hero_sold == []: st.write("No Hero(s) Sold")
+            if hero_sold == []: col2.write("No Hero(s) Sold")
+            if new_hero == []: col3.write("No New Hero(s)")
+
             else:
                 for i in range(max(len(hero_sold), len(new_hero))):
                     col1.write(str(i+1))
