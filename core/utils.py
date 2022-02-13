@@ -69,14 +69,14 @@ professions = {
 }
 
 stats = {
-    0: 'strength',
-    2: 'agility',
-    4: 'intelligence',
-    6: 'wisdom',
-    8: 'luck',
-    10: 'vitality',
-    12: 'endurance',
-    14: 'dexterity'
+    0: 'STR',
+    2: 'AGI',
+    4: 'INT',
+    6: 'WIS',
+    8: 'LCK',
+    10: 'VIT',
+    12: 'END',
+    14: 'DEX'
 }
 
 elements = {
@@ -260,25 +260,25 @@ def human_readable_auction(auction):
 
 
 # Personal Utils
-def short_stat(stat):
-    short_stat = {
-        "agility": "AGI",
-        "strength": "STR",
-        "endurance": "END",
-        "luck": "LCK",
-        "dexterity": "DEX",
-        "wisdom": "WIS",
-        "intelligence": "INT",
-        "vitality": "VIT"
+def long_stat(stat):
+    long_stat = {
+        "AGI": "agility",
+        "STR": "strength",
+        "END": "endurance",
+        "LCK": "luck",
+        "DEX": "dexterity",
+        "WIS": "wisdom",
+        "INT": "intelligence",
+        "VIT": "vitality"
     }
-    return short_stat[stat]
+    return long_stat[stat]
 
 def ideal_professsion_stats(profession):
     ideal_professsion_stats = {
-        "mining": ["strength", "endurance"],
-        "gardening": ["wisdom", "vitality"],
-        "foraging": ["intelligence", "dexterity"],
-        "fishing": ["agility", "luck"]
+        "mining": ["STR", "END"],
+        "gardening": ["WIS", "VIT"],
+        "foraging": ["INT", "DEX"],
+        "fishing": ["AGI", "LCK"]
     }
     return ideal_professsion_stats[profession]
 

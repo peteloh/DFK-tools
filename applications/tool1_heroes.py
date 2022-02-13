@@ -24,7 +24,7 @@ def app():
     "Rarity" : [],
     "Class": [],
     "SubClass": [],
-    "Prof": [],
+    "Profession": [],
     "ProfStat1": [],
     "ProfStat2": [],
     "ValStat1": [],
@@ -61,6 +61,22 @@ def app():
         pg_bar_holder = col1.empty()
         pg_bar = pg_bar_holder.progress(0)
 
+        col1,col2,col3,col4,col5,col6,col7,col8,col9,col10,col11,col12,col13,col14 = st.columns((1,0.5,0.5,0.5,1,1,1,1,0.8,0.8,0.7,0.5,0.5,0.5))
+        col1.markdown("**ID**")
+        col2.markdown("**Gen**")
+        col3.markdown("**SumLeft**")
+        col4.markdown("**SumMax**")
+        col5.markdown("**Rarity**")
+        col6.markdown("**Class**")
+        col7.markdown("**SubClass**")
+        col8.markdown("**Profession**")
+        col9.markdown("**ProfStat1**")
+        col10.markdown("**ProfStat2**")
+        col11.markdown("**Val1**")
+        col12.markdown("**Val2**")
+        col13.markdown("**ΣStats**")
+        col14.markdown("**Lvl**")
+
         for hero in user_heroes:
             count+=1
             
@@ -69,35 +85,60 @@ def app():
 
             raw_details = hero_core.get_hero(hero, rpc_address)
             details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
-            data["ID"] += [details["id"]]
-            data["Gen"] += [details["info"]["generation"]]
+            heroId = details["id"]
+            data["ID"] += [heroId]
+            col1.text(heroId)
+            
+            generation = details["info"]["generation"]
+            data["Gen"] += [generation]
+            col2.text(generation)
 
             maxSummons = details["summoningInfo"]["maxSummons"]
-            data["SumLeft"] += [maxSummons - details["summoningInfo"]["summons"]]
+            sumLeft = maxSummons - details["summoningInfo"]["summons"]
+            data["SumLeft"] += [sumLeft]
+            col3.text(sumLeft)
             data["SumMax"] += [maxSummons]
+            col4.text(maxSummons)
 
-            data["Rarity"] += [details["info"]["rarity"]]
-            data["Class"] += [details["info"]["statGenes"]["class"]]
-            data["SubClass"] += [details["info"]["statGenes"]["subClass"]]
+            rarity = details["info"]["rarity"]
+            data["Rarity"] += [rarity]
+            col5.text(rarity)
+            mainClass = details["info"]["statGenes"]["class"]
+            data["Class"] += [mainClass]
+            col6.text(mainClass)
+            subClass = details["info"]["statGenes"]["subClass"]
+            data["SubClass"] += [subClass]
+            col7.text(subClass)
 
             profession = details["info"]["statGenes"]["profession"]
-            data["Prof"] += [profession]
+            data["Profession"] += [profession]
+            col8.text(profession)
 
             prof_stats = utils.ideal_professsion_stats(profession)
-            data["ProfStat1"] += [utils.short_stat(prof_stats[0])]
-            data["ProfStat2"] += [utils.short_stat(prof_stats[1])]
+            data["ProfStat1"] += [prof_stats[0]]
+            col9.text(prof_stats[0])
+            data["ProfStat2"] += [prof_stats[1]]
+            col10.text(prof_stats[1])
 
-            profStat1_val = details["stats"][prof_stats[0]]
-            profStat2_val = details["stats"][prof_stats[1]]
+            profStat1_val = details["stats"][utils.long_stat(prof_stats[0])]
+            profStat2_val = details["stats"][utils.long_stat(prof_stats[1])]
             data["ValStat1"] += [profStat1_val]
+            col11.text(profStat1_val)
             data["ValStat2"] += [profStat2_val]
-            data["SumStats"] += [profStat1_val + profStat2_val]
+            col12.text(profStat2_val)
+            sumStats = profStat1_val + profStat2_val
+            data["SumStats"] += [sumStats]
+            col13.text(sumStats)
 
-            data["Level"] += [details["state"]["level"]]
+            level = details["state"]["level"]
+            data["Level"] += [level]
+            col14.text(level)
 
         pg_bar_holder.empty() 
         df = pd.DataFrame(data=data)
-        st.dataframe(df,height=3000)
+        # st.dataframe(df,height=3000)
+
+
 
         csv = convert_df(df)
         filename = "dfk_heroes.csv"

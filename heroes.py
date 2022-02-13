@@ -1,3 +1,5 @@
+import time
+
 # database
 import sqlite3
 from pypika import Query, Table, Field
@@ -67,7 +69,16 @@ def create_heroes_table():
     db.close()
 
 def insert_hero_details(db, heroId):
-    raw_details = hero_core.get_hero(heroId, RPC_ADDRESS)
+
+    query_successful = False
+    while query_successful == False:
+        try:
+            raw_details = hero_core.get_hero(heroId, RPC_ADDRESS)
+            query_successful = True
+        except Exception as e: 
+            print(e)
+            time.sleep(5)
+
     details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
 
     maxSummons = details["summoningInfo"]["maxSummons"]
@@ -175,7 +186,7 @@ def tuple_to_hero_details_dict(obj):
 if __name__ == '__main__':
     
     create_heroes_table()
-    hero_details = get_hero_details(100000)
+    hero_details = get_hero_details(126511)
     print(hero_details)
     
 
