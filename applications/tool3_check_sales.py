@@ -5,6 +5,7 @@ import pandas as pd
 # custom imports
 from core import hero_core, auction_core, utils
 from applications import tool1_heroes
+from applications import tool2_summons
 
 RPC_ADDRESS = "https://api.harmony.one"
 AUCTION_ADDRESS = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
@@ -62,6 +63,26 @@ my_heroes = """
     126530
 """
 
+def get_details(heroId):
+    raw_details = hero_core.get_hero(heroId, RPC_ADDRESS)
+    details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
+    table = [["ID"],["Gen"], ["Level"], ["Summons"], ["Rarity"], ["Class"], ["SubClass"], ["Profession"],["GreenStat"], ["BlueStat"]]
+    table[0] += [details["id"]]
+    table[1] += [details["info"]["generation"]]
+    table[2] += [details["state"]["level"]]
+    maxSummons = details["summoningInfo"]["maxSummons"]
+    sumLeft = maxSummons - details["summoningInfo"]["summons"]
+    table[3] += [str(sumLeft) + "/" + str(maxSummons)]
+    table[4] += [details["info"]["rarity"]]
+    table[5] += [details["info"]["statGenes"]["class"]]
+    table[6] += [details["info"]["statGenes"]["subClass"]]
+    profession = details["info"]["statGenes"]["profession"]
+    table[7] += [profession]
+    prof_stats = utils.ideal_professsion_stats(profession)
+    table[8] += [details["info"]["statGenes"]["statBoost1"]]
+    table[9] += [details["info"]["statGenes"]["statBoost2"]]
+    df = pd.DataFrame(np.array(table))
+    return df
 
 def app():
 
@@ -105,7 +126,6 @@ def app():
 
         hero_sold = []
         new_hero = []
-        
 
         for i in range(len(old_list)):
             if old_list[i] not in current_list:
@@ -116,24 +136,26 @@ def app():
                 new_hero += [current_list[i]]
 
         with st.container():
-            col1,col2,col3 = st.columns((1,1,1))
-            col1.markdown("**Number**")
-            col2.markdown("**Hero Sold**")
-            col3.markdown("**New Hero**")
+            col1,col2 = st.columns((1,1))
+            col1.markdown("**Hero Sold**")
+            col2.markdown("**New Hero**")
 
-            if hero_sold == []: col2.write("No Hero(s) Sold")
-            if new_hero == []: col3.write("No New Hero(s)")
-
-            else:
-                for i in range(max(len(hero_sold), len(new_hero))):
-                    col1.write(str(i+1))
-
+            if hero_sold == []: col1.write("No Hero(s) Sold")
+            else: 
                 for hero in hero_sold:
-                    col2.write(str(hero))
-                
-                for hero in new_hero:
-                    col3.write(str(hero))
+                    # col1.write(str(hero))
+                    with col1.expander(str(hero)):
+                        df = get_details(hero)
+                        st.table(df)
 
+            if new_hero == []: col2.write("No New Hero(s)")
+            else:
+                for hero in new_hero:
+                    # col2.write(str(hero))
+                    with col2.expander(str(hero)):
+                        df = get_details(hero)
+                        st.table(df)
+        
         st.write("#")  
         
         st.header("Calculations")  

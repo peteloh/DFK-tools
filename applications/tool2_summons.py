@@ -184,10 +184,6 @@ class summon:
                 hero2_statBoost2 = df2.loc[:,"BlueStat"][j]
                 self.statBoost[hero1_statBoost2][1] += 0.5 * weighting[i] * weighting[j]
                 self.statBoost[hero2_statBoost2][1] += 0.5 * weighting[i] * weighting[j]
-        
-
-def df_to_table(df):
-    pass
 
 def app():
 
