@@ -130,7 +130,7 @@ def app():
                     col2.write(str(hero))
                 
                 for hero in new_hero:
-                    col3.write(hstr(hero))
+                    col3.write(str(hero))
 
         st.write("#")  
         

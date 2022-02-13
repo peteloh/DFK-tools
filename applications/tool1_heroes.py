@@ -83,7 +83,7 @@ def app():
             percentage = count / len(user_heroes)
             pg_bar_holder.progress(percentage)
 
-            raw_details = hero_core.get_hero(hero, rpc_address)
+            raw_details = hero_core.get_hero(hero, RPC_ADDRESS)
             details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
             heroId = details["id"]
             data["ID"] += [heroId]
