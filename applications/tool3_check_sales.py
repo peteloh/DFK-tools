@@ -15,6 +15,52 @@ def heroes_string_to_list(heroes_string):
         old_list[i] = int(old_list[i])
     return old_list
 
+my_heroes = """
+    32436
+    43124
+    52654
+    57763
+    59353
+    62625
+    65456
+    67570
+    68109
+    70142
+    70722
+    71631
+    72734
+    73805
+    78384
+    80331
+    80335
+    81764
+    83525
+    88002
+    99260
+    101896
+    106105
+    108143
+    111688
+    112548
+    116164
+    116183
+    116595
+    117394
+    117484
+    118630
+    120121
+    120274
+    121351
+    122037
+    122043
+    124852
+    125145
+    125148
+    125725
+    126097
+    126524
+    126530
+"""
 
 
 def app():
@@ -32,10 +78,10 @@ def app():
         else: user_addresses += [col1.text_input('0x Wallet {} Address'.format(i+1), value="")]
     
     st.subheader('Previous Heroes')
-    heroes_string = st.text_input('Heroes List',value="32436 43124 52654 57763 59353 62625 65456 67570 68109 70142 70722 71631 72734 73805 78384 80331 80335 81764 83525 88002 89219 99260 101896 106105 108143 111688 112548 116164 116183 116595 117394 117484 118630 120121 120274 122037 122043 124852 125145 125148 125725 126097 121351 126524 126530")
+    heroes_string = st.text_input('Heroes List',value=my_heroes)
 
     with st.expander('Heroes List Help'):
-        st.markdown("**Step 1** - Copy row of hero IDs")
+        st.markdown("**Step 1** - Copy column of hero IDs")
         st.image('./images/hero_list_guide.png')
         st.markdown("**Step 2** - Paste as it is")
         st.image('./images/hero_list_guide2.png')
