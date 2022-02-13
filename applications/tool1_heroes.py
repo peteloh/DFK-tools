@@ -6,8 +6,8 @@ import matplotlib.pyplot as pl
 from core import hero_core, auction_core, utils
 from core.dfk_contracts import serendale_contracts
 
-auction_address = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
-rpc_address = "https://api.harmony.one"
+AUCTION_ADDRESS = "0x13a65B9F8039E2c032Bc022171Dc05B30c3f2892"
+RPC_ADDRESS = "https://api.harmony.one"
 
 @st.cache
 def convert_df(df):
@@ -46,14 +46,14 @@ def app():
     
     if col1.button('Search'):
         if len(user_addresses) == 1:
-            user_heroes_in_wallet = hero_core.get_users_heroes(user_addresses[0], rpc_address)
-            user_heroes_in_auctions = auction_core.get_user_auctions(auction_address, user_addresses[0], rpc_address)
+            user_heroes_in_wallet = hero_core.get_users_heroes(user_addresses[0], RPC_ADDRESS)
+            user_heroes_in_auctions = auction_core.get_user_auctions(AUCTION_ADDRESS, user_addresses[0], RPC_ADDRESS)
             user_heroes = sorted(user_heroes_in_wallet + user_heroes_in_auctions)
         else:
             user_heroes = []
             for i in range(len(user_addresses)):
-                user_heroes += hero_core.get_users_heroes(user_addresses[i], rpc_address)
-                user_heroes += auction_core.get_user_auctions(auction_address, user_addresses[i], rpc_address)
+                user_heroes += hero_core.get_users_heroes(user_addresses[i], RPC_ADDRESS)
+                user_heroes += auction_core.get_user_auctions(AUCTION_ADDRESS, user_addresses[i], RPC_ADDRESS)
 
         user_heroes = sorted(user_heroes)
         count = 0
