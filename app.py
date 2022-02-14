@@ -28,7 +28,10 @@ app.add_page("Recent Hero Sales", tool3_check_sales.app)
 
 # The main app
 app.run()
-
+st.sidebar.markdown("#")
+st.sidebar.markdown("This tool is made to assist interactions with Defi Kingdoms applicaiton")
+st.sidebar.markdown("https://game.defikingdoms.com/")
+st.sidebar.markdown("#")
 st.sidebar.markdown("Made by Pete Loh")
 
     
