@@ -22,9 +22,9 @@ col2.image("./images/jewel_icon.png")
 st.sidebar.title("DFK Tools")
 
 # Add all your applications (pages) here
-app.add_page("Recent Hero Sales", tool3_check_sales.app)
 app.add_page("Summoning Guru", tool2_summons.app)
 app.add_page("Heroes Tracker", tool1_heroes.app)
+app.add_page("Recent Hero Sales", tool3_check_sales.app)
 
 # The main app
 app.run()
