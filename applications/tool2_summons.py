@@ -85,7 +85,7 @@ def unweighted_class_chances(class1, class2):
         p[class1] = 0.375
         p[class2] = 0.375
     elif (class1 == "dragoon" and class2 == "sage") or (class1 == "sage" and class2 == "dragoon"):
-        p["sage"] = 0.125
+        p["dreadKnight"] = 0.125
         p[class1] = 0.4375
         p[class2] = 0.4375
     else:
