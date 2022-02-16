@@ -39,9 +39,6 @@ def create_heroes_table():
             summonerId      INTEGER,
             assistantId     INTEGER,
             Generation      INTEGER,
-            Level           INTEGER,
-            SumLeft         INTEGER,
-            SumMax          INTEGER,
             Rarity          TEXT,
             Class_D0        TEXT,
             Class_R1        TEXT,
@@ -70,28 +67,21 @@ def create_heroes_table():
 
 def insert_hero_details(db, heroId):
 
-    query_successful = False
-    while query_successful == False:
-        try:
-            raw_details = hero_core.get_hero(heroId, RPC_ADDRESS)
-            query_successful = True
-        except Exception as e: 
-            print(e)
-            time.sleep(5)
+    # query_successful = False
+    # while query_successful == False:
+    try:
+        raw_details = hero_core.get_hero(heroId, RPC_ADDRESS)
+        query_successful = True
+    except: 
+        return "NoHero"
 
     details = hero_core.human_readable_hero(raw_details, hero_male_first_names=None, hero_female_first_names=None, hero_last_names=None)
-
-    maxSummons = details["summoningInfo"]["maxSummons"]
-    SumLeft = maxSummons - details["summoningInfo"]["summons"]
 
     q = Query.into(HERO_DATABASE_TABLE_NAME).insert(
             details["id"],
             details["summoningInfo"]["summonerId"],
             details["summoningInfo"]["assistantId"],
             details["info"]["generation"],
-            details["state"]["level"],
-            SumLeft,
-            maxSummons,
             details["info"]["rarity"],
             details["info"]["statGenes"]["class"],
             details["info"]["statGenes"]['r1']["class"],
@@ -128,7 +118,7 @@ def get_hero_details(heroId):
     result = cur.fetchall()
     
     if result == []: 
-        update_database(heroId)
+        update_static_database()
         sql = f"""select * from {HERO_DATABASE_TABLE_NAME} 
                 where heroId={heroId}"""
         cur.execute(sql)
@@ -136,19 +126,22 @@ def get_hero_details(heroId):
     
     return tuple_to_hero_details_dict(result)
 
-def update_database(heroId):
+def update_static_database():
+    # this is the database that doesnt care about level, stats etc that can change over time
     print("updating database..")
     db = connect_db(DATABASE_FILE)
     cur = db.cursor()
     sql = f"""select MAX(heroId) from {HERO_DATABASE_TABLE_NAME} """
-    cur.execute(sql)
+    result = cur.execute(sql)
     lastUpdatedID = cur.fetchall()[0][0]
+    if lastUpdatedID == None: lastUpdatedID = 0
 
-    while lastUpdatedID != heroId:
+    while result != "NoHero":
         lastUpdatedID += 1
-        insert_hero_details(db, lastUpdatedID)
-        print("hero " + str(lastUpdatedID) + " added")
-    
+        result = insert_hero_details(db, lastUpdatedID)
+        if result != "NoHero": print("hero " + str(lastUpdatedID) + " added")
+
+
     print("database updated!")
 
 def tuple_to_hero_details_dict(obj):
@@ -186,8 +179,14 @@ def tuple_to_hero_details_dict(obj):
 if __name__ == '__main__':
     
     create_heroes_table()
-    hero_details = get_hero_details(126511)
-    print(hero_details)
+    update_static_database()
+
+    # try:
+    #     details = hero_core.get_hero(128788, RPC_ADDRESS)
+    #     print(details)
+    # except:
+    #     print("Error")
+
     
 
 

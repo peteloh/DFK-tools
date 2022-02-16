@@ -234,11 +234,5 @@ if __name__ == "__main__":
     user_address = "0xC2cfCDa0cd983C5E920E053F0985708c5e420f2F"
     rpc_address = "https://api.fuzz.fi"
 
-    user_heroes = get_users_heroes(user_address, rpc_address)
-
-    print(user_heroes)
-    print(len(user_heroes))
-
-    for hero in user_heroes:
-        details = get_hero(hero, rpc_address)
-        print(details)
+    details = get_hero(128788, rpc_address)
+    print(details)
