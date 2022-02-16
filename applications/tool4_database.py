@@ -248,9 +248,9 @@ def app():
         col1, col2, col3, col4, col5, col6, col7, col8 = st.columns((1,1,1,1,1,1,1,1))
         rarity, mainClass = get_counts()
 
-        col1.markdown("**class**")
-        col2.markdown("**number**")
-        col3.markdown("**percentage**")
+        col1.markdown("**Class**")
+        col2.markdown("**Number**")
+        col3.markdown("**Percentage**")
 
         col1.text("warrior")
         col1.text("knight")
@@ -300,6 +300,10 @@ def app():
         col3.text(str(round((mainClass["dragoon"]/ total_heroes)*100))+"%")
         col3.text(str(round((mainClass["dreadKnight"]/ total_heroes)*100))+"%")
 
+        col5.markdown("**Rarity**")
+        col6.markdown("**Number**")
+        col7.markdown("**Percentage**")
+
         col5.text("common")
         col5.text("uncommon")
         col5.text("rare")
@@ -311,6 +315,12 @@ def app():
         col6.text(str(rarity['rare']))
         col6.text(str(rarity['legendary']))
         col6.text(str(rarity['mythic']))
+
+        col7.text(str(round((rarity["common"]/ total_heroes)*100))+"%")
+        col7.text(str(round((rarity["uncommon"]/ total_heroes)*100))+"%")
+        col7.text(str(round((rarity["rare"]/ total_heroes)*100))+"%")
+        col7.text(str(round((rarity["legendary"]/ total_heroes)*100))+"%")
+        col7.text(str(round((rarity["pirmythicate"]/ total_heroes)*100))+"%")
 
 
 
