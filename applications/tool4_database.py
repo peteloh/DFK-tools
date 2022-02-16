@@ -320,7 +320,7 @@ def app():
         col7.text(str(round((rarity["uncommon"]/ total_heroes)*100))+"%")
         col7.text(str(round((rarity["rare"]/ total_heroes)*100))+"%")
         col7.text(str(round((rarity["legendary"]/ total_heroes)*100))+"%")
-        col7.text(str(round((rarity["pirmythicate"]/ total_heroes)*100))+"%")
+        col7.text(str(round((rarity["mythic"]/ total_heroes)*100))+"%")
 
 
 
