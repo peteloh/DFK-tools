@@ -238,10 +238,9 @@ def app():
         placeholder = col2.empty()
         placeholder.subheader(str(total_heroes))
 
-        if col3.button("Update"):
-            total_heroes = update_static_database()
-            placeholder.subheader(str(total_heroes))
-
+    if st.button("Update"):
+        total_heroes = update_static_database()
+        placeholder.subheader(str(total_heroes))
     st.markdown("#")
 
     with st.container():
