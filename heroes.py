@@ -1,4 +1,5 @@
 import time
+import pandas as pd
 
 # database
 import sqlite3
@@ -140,8 +141,7 @@ def update_static_database():
         lastUpdatedID += 1
         result = insert_hero_details(db, lastUpdatedID)
         if result != "NoHero": print("hero " + str(lastUpdatedID) + " added")
-
-
+    db.close()
     print("database updated!")
 
 def tuple_to_hero_details_dict(obj):
@@ -180,12 +180,7 @@ if __name__ == '__main__':
     
     create_heroes_table()
     update_static_database()
-
-    # try:
-    #     details = hero_core.get_hero(128788, RPC_ADDRESS)
-    #     print(details)
-    # except:
-    #     print("Error")
+    
 
     
 
