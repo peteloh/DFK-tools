@@ -185,6 +185,12 @@ class summon:
                 self.statBoost[hero1_statBoost2][1] += 0.5 * weighting[i] * weighting[j]
                 self.statBoost[hero2_statBoost2][1] += 0.5 * weighting[i] * weighting[j]
 
+def convert_to_percent(decimal):
+    if not isinstance(decimal, float): return "-"
+    if decimal == 0: return "-"
+    else: return str(round((decimal * 100),2))+"%"
+
+
 def app():
 
     st.title('Summoning Guru')
@@ -203,7 +209,6 @@ def app():
         hero1.get_stats(hero1.details)
         hero2.get_stats(hero2.details)
 
-        
     with st.container():
         col1, col2, col5, col6 = st.columns((1,1,1,1))
 
@@ -280,10 +285,11 @@ def app():
 
     else:
         if st.button('Search'):
-
+            
+            st.header("Probability")
+            
             with st.container():
 
-                st.header("Probability")
                 offspring.calculate_genes_probability(df1,df2)
                 
                 col1, col2, col3, col4, col5, col6, col7, col8 = st.columns((1,1,1,1,1,1,1,1)) 
@@ -336,40 +342,116 @@ def app():
                     if df5_array[i,0] == 0: col6.text("-")
                     else: col6.text(str(round(df5_array[i,0],2))+"%")
             
+            st.markdown('#')
+
+            with st.expander('Advanced Details'):
+                col1, col2, col3, col4, col5 = st.columns((1,1,1,1,1))
+
+                col1.markdown('**Class**')
+                col2.markdown('**Match Prof + 2 StatBoosts**')
+                col3.markdown('**Match Prof + 1 StatBoosts**')
+                col4.markdown('**Match Prof + 0 StatBoosts**')
+                col5.markdown('**Mismatched Prof**')
+    
+                # prob_class = offspring.hero_class
+                table = []
+
+                for key in offspring.hero_class.keys():
+
+                    prob_mainclass = offspring.hero_class[key][0]
+
+                    matching_prof = utils.ideal_class_profession(key)
+                    prob_matching_prof = offspring.hero_profession[matching_prof]
+                    prob_not_matching_prof = 1 - prob_matching_prof
+
+                    matching_stats = utils.ideal_professsion_stats(matching_prof)
+                    matching_stat1 = matching_stats[0]
+                    matching_stat2 = matching_stats[1]
+
+                    prob_matching_stat1 = offspring.statBoost[matching_stat1][0] + offspring.statBoost[matching_stat2][0]
+                    prob_not_matching_stat1 = 1 - prob_matching_stat1
+                    prob_matching_stat2 = offspring.statBoost[matching_stat1][1] + offspring.statBoost[matching_stat2][1]
+                    prob_not_matching_stat2 = 1 - prob_matching_stat2
+
+                    table += [[
+                        key,
+                        prob_mainclass * prob_matching_prof * prob_matching_stat1 * prob_matching_stat2,
+                        prob_mainclass * prob_matching_prof * prob_matching_stat1 * prob_not_matching_stat2 + prob_mainclass * prob_matching_prof * prob_not_matching_stat1 * prob_matching_stat2,
+                        prob_mainclass * prob_matching_prof * prob_not_matching_stat1 * prob_not_matching_stat2,
+                        prob_mainclass * prob_not_matching_prof,
+                        prob_mainclass
+                    ]]
+                total = [0,0,0,0]
+                for row in table:
+
+                    col1.text(row[0])
+                    col2.text(convert_to_percent(row[1]))
+                    col3.text(convert_to_percent(row[2]))
+                    col4.text(convert_to_percent(row[3]))
+                    col5.text(convert_to_percent(row[4]))
+                    total[0] += row[1]
+                    total[1] += row[2]
+                    total[2] += row[3]
+                    total[3] += row[4]
                 
-                # col5.markdown("**StatBoost**")
-                # col6.write("GreenStat")
-                # col7.write("BlueStat")
+                col1.markdown("**Total**")
+                col2.markdown("**"+convert_to_percent(total[0])+"**")
+                col3.markdown("**"+convert_to_percent(total[1])+"**")
+                col4.markdown("**"+convert_to_percent(total[2])+"**")
+                col5.markdown("**"+convert_to_percent(total[3])+"**")
 
-                # col1.text(offspring.hero_class[0][])
-                # col2.text(df3[0,1])
-                # col3.text(df3[0,2])
-                # col5.text("**StatBoost**")
-                # col6.text("GreenStat")
-                # col7.text("BlueStat")
+            st.header("Basic Expected Returns")
 
+            with st.container():
+                st.markdown("Need to find floor prices for each case and multiply into the probabilities, then subtract all costs to get expected returns")
+                col1, col2, col3, col4 = st.columns((1,1,1,1))
+                valid_classes = []
+                floor_prices = []
 
+                col1.markdown("**Hero Costs**")
+                # col2.markdown("** **")
+                col3.markdown("**Potential Rewards**")
+                # col4.markdown("** **")
 
-                # col1.markdown("**Class**")
-                # col1.dataframe(df3.style.format(subset=['MainClass', 'SubClass'], formatter="{:.2%}"), height=1500)
+                for key in offspring.hero_class.keys():
+                    if offspring.hero_class[key][0] != 0:
+                        valid_classes += [key]
+                
+                for c in valid_classes:
+                    floor_prices += [col3.number_input(f"{c} est. floor price")]
 
-                # col2.markdown("**StatBoost**")
-                # col2.dataframe(df5.style.format(subset=['GreenStat', 'BlueStat'], formatter="{:.2%}"), height=1500)
+                col1.number_input(f"Cost of Hero 1")
+                col1.number_input(f"Cost of Hero 2")
 
-                # col2.markdown("**Profession**")
-                # col2.dataframe(df4.style.format(subset=['Profession'], formatter="{:.2%}"), height=1500)
+                col1.markdown("____________________________________________________________")
 
-                with st.container():
+                col1.markdown("**Summoning Costs**")
+                maxSummons = min(hero1.stats["SumLeft"][0], hero2.stats["SumLeft"][0])
+                col1.markdown(f"This pair has **{maxSummons} summon(s)** left")
 
-                    st.header("\nCalculation Details")
+                for i in range(maxSummons):
+                    col1.text("Too tired rn - do this later")
+            
+            st.button("Calculate")
+                    
+            st.header("\nCalculation Details")
+            with st.container():
 
-                    st.markdown("""
-                    1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
-                    2. Weighting of each genes: 
-                        D0 - 75%
-                        R1 - 18.75%
-                        R2 - 4.6875%
-                        R3 - 1.5625%
-                    3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight
-                    """)
+                st.markdown("""
+                1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
+                2. Weighting of each genes: 
+                    D0 - 75%
+                    R1 - 18.75%
+                    R2 - 4.6875%
+                    R3 - 1.5625%
+                3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight
+                """)
+
+                st.markdown("""
+                For advanced probabilities, 4 main scenarios were considered:
+                1. Main Class match with profession and 2 stat boost
+                2. Main Class match with profession and 1 stat boost
+                3. Main Class match with profession and 0 stat boost
+                4. Main Class not match with profession.
+                """)
     

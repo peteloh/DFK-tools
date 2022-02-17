@@ -293,11 +293,11 @@ def ideal_class_profession(mainClass):
         "wizard": "gardening",
         "priest": "gardening",
         "paladin": "mining",
-        "darkknight": "mining",
+        "darkKnight": "mining",
         "ninja": "fishing",
         "summoner": "gardening",
         "dragoon": "mining",
         "sage": "gardening",
-        "dreadknight": "mining"
+        "dreadKnight": "mining"
     }
     return ideal_class_profession[mainClass]
