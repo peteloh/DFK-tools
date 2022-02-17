@@ -14,27 +14,27 @@ class hero:
     
     def get_stats(self, details):
         data = {}
-        data["ID"] = [details["id"]]
-        data["Gen"] = [details["info"]["generation"]]
-        data["Level"] = [details["state"]["level"]]
+        data["ID"] = details["id"]
+        data["Gen"] = details["info"]["generation"]
+        data["Level"] = details["state"]["level"]
         maxSummons = details["summoningInfo"]["maxSummons"]
-        data["SumLeft"] = [maxSummons - details["summoningInfo"]["summons"]]
-        data["SumMax"] = [maxSummons]
-        data["Rarity"] = [details["info"]["rarity"]]
-        data["Class"] = [details["info"]["statGenes"]["class"]]
-        data["SubClass"] = [details["info"]["statGenes"]["subClass"]]
+        data["SumLeft"] = maxSummons - details["summoningInfo"]["summons"]
+        data["SumMax"] = maxSummons
+        data["Rarity"] = details["info"]["rarity"]
+        data["Class"] = details["info"]["statGenes"]["class"]
+        data["SubClass"] = details["info"]["statGenes"]["subClass"]
         profession = details["info"]["statGenes"]["profession"]
-        data["Prof"] = [profession]
+        data["Prof"] = profession
 
         prof_stats = utils.ideal_professsion_stats(profession)
-        data["ProfStat1"] = [prof_stats[0]]
-        data["ProfStat2"] = [prof_stats[1]]
+        data["ProfStat1"] = prof_stats[0]
+        data["ProfStat2"] = prof_stats[1]
         profStat1_val = details["stats"][utils.long_stat(prof_stats[0])]
         profStat2_val = details["stats"][utils.long_stat(prof_stats[1])]
-        data["ValStat1"] = [profStat1_val]
-        data["ValStat2"] = [profStat2_val]
-        data["GreenStat"] = [details["info"]["statGenes"]["statBoost1"]]
-        data["BlueStat"] = [details["info"]["statGenes"]["statBoost2"]]
+        data["ValStat1"] = profStat1_val
+        data["ValStat2"] = profStat2_val
+        data["GreenStat"] = details["info"]["statGenes"]["statBoost1"]
+        data["BlueStat"] = details["info"]["statGenes"]["statBoost2"]
         self.stats = data
 
     def genes_df(self, d0, r1, r2, r3):
@@ -213,49 +213,49 @@ def app():
         col1, col2, col5, col6 = st.columns((1,1,1,1))
 
         col1.text("Hero ID")
-        col2.text(str(hero1.stats["ID"][0]))
+        col2.text(str(hero1.stats["ID"]))
         col5.text("Hero ID")
-        col6.text(str(hero2.stats["ID"][0]))
+        col6.text(str(hero2.stats["ID"]))
 
         col1.text("Generation")
-        col2.text(str(hero1.stats["Gen"][0]))
+        col2.text(str(hero1.stats["Gen"]))
         col5.text("Generation")
-        col6.text(str(hero2.stats["Gen"][0]))
+        col6.text(str(hero2.stats["Gen"]))
 
         col1.text("Summons")
-        col2.text(str(hero1.stats["SumLeft"][0]) + "/" + str(hero1.stats["SumMax"][0]))
+        col2.text(str(hero1.stats["SumLeft"]) + "/" + str(hero1.stats["SumMax"]))
         col5.text("Summons")
-        col6.text(str(hero2.stats["SumLeft"][0]) + "/" + str(hero2.stats["SumMax"][0]))
+        col6.text(str(hero2.stats["SumLeft"]) + "/" + str(hero2.stats["SumMax"]))
 
         col1.text("Rarity")
-        col2.text(str(hero1.stats["Rarity"][0]))
+        col2.text(str(hero1.stats["Rarity"]))
         col5.text("Rarity")
-        col6.text(str(hero2.stats["Rarity"][0]))
+        col6.text(str(hero2.stats["Rarity"]))
 
         col1.text("Class")
-        col2.text(str(hero1.stats["Class"][0]))
+        col2.text(str(hero1.stats["Class"]))
         col5.text("Class")
-        col6.text(str(hero2.stats["Class"][0]))
+        col6.text(str(hero2.stats["Class"]))
 
         col1.text("SubClass")
-        col2.text(str(hero1.stats["SubClass"][0]))
+        col2.text(str(hero1.stats["SubClass"]))
         col5.text("SubClass")
-        col6.text(str(hero2.stats["SubClass"][0]))
+        col6.text(str(hero2.stats["SubClass"]))
 
         col1.text("Profession")
-        col2.text(str(hero1.stats["Prof"][0]))
+        col2.text(str(hero1.stats["Prof"]))
         col5.text("Profession")
-        col6.text(str(hero2.stats["Prof"][0]))
+        col6.text(str(hero2.stats["Prof"]))
 
         col1.text("GreenStat")
-        col2.text(str(hero1.stats["GreenStat"][0]))
+        col2.text(str(hero1.stats["GreenStat"]))
         col5.text("GreenStat")
-        col6.text(str(hero2.stats["GreenStat"][0]))
+        col6.text(str(hero2.stats["GreenStat"]))
 
         col1.text("BlueStat")
-        col2.text(str(hero1.stats["BlueStat"][0]))
+        col2.text(str(hero1.stats["BlueStat"]))
         col5.text("BlueStat")
-        col6.text(str(hero2.stats["BlueStat"][0]))
+        col6.text(str(hero2.stats["BlueStat"]))
     
     with st.container():
         df1 = hero1.genes_df(
@@ -279,7 +279,6 @@ def app():
         col2.markdown("**Genes**")
         col2.write(df2)
 
-    
     if offspring.check_same_grandparents(hero1, hero2) == True or offspring.check_is_parent_child(hero1, hero2) == True:
         st.write("Incest is not allowed, please try a different pair of heroes.")
 
@@ -287,7 +286,7 @@ def app():
         if st.button('Search'):
             
             st.header("Probability")
-            
+            st.subheader("Basic Statistics")
             with st.container():
 
                 offspring.calculate_genes_probability(df1,df2)
@@ -344,7 +343,8 @@ def app():
             
             st.markdown('#')
 
-            with st.expander('Advanced Details'):
+            st.subheader("Advanced Statistics")
+            with st.container():
                 col1, col2, col3, col4, col5 = st.columns((1,1,1,1,1))
 
                 col1.markdown('**Class**')
@@ -400,39 +400,91 @@ def app():
                 col4.markdown("**"+convert_to_percent(total[2])+"**")
                 col5.markdown("**"+convert_to_percent(total[3])+"**")
 
-            st.header("Basic Expected Returns")
+            # st.markdown('#')
+            # st.subheader("Expected Returns")
+            # with st.container(): 
+            #     col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
+            #     col2.markdown("**Costs**")
+            #     # col2.markdown("** **")
 
-            with st.container():
-                st.markdown("Need to find floor prices for each case and multiply into the probabilities, then subtract all costs to get expected returns")
-                col1, col2, col3, col4 = st.columns((1,1,1,1))
-                valid_classes = []
-                floor_prices = []
+            #     col1.markdown("**Potential Rewards**")
+            #     # col4.markdown("** **")
 
-                col1.markdown("**Hero Costs**")
-                # col2.markdown("** **")
-                col3.markdown("**Potential Rewards**")
-                # col4.markdown("** **")
-
-                for key in offspring.hero_class.keys():
-                    if offspring.hero_class[key][0] != 0:
-                        valid_classes += [key]
+            # with st.container():
                 
-                for c in valid_classes:
-                    floor_prices += [col3.number_input(f"{c} est. floor price")]
+            #     col3, gap, col1, col2, col4 = st.columns((1,0.5,1,1,1))
+            #     valid_classes = []
+            #     floor_prices = []
 
-                col1.number_input(f"Cost of Hero 1")
-                col1.number_input(f"Cost of Hero 2")
+            #     for key in offspring.hero_class.keys():
+            #         if offspring.hero_class[key][0] != 0:
+            #             valid_classes += [key]
+                
+            #     for c in valid_classes:
+            #         floor_prices += [col3.number_input(f"{c} est. floor price")]
 
-                col1.markdown("____________________________________________________________")
+            #     cost_hero1 = col1.number_input(f"Cost of Hero 1")               
+            #     cost_hero2 = col1.number_input(f"Cost of Hero 2")
 
-                col1.markdown("**Summoning Costs**")
-                maxSummons = min(hero1.stats["SumLeft"][0], hero2.stats["SumLeft"][0])
-                col1.markdown(f"This pair has **{maxSummons} summon(s)** left")
+            #     hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)")
+            #     hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)")
+                
+            #     net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
 
-                for i in range(maxSummons):
-                    col1.text("Too tired rn - do this later")
+            #     col1.markdown(f"**Net Hero Cost   =   {net_hero_cost}**")
+
+            #     col1.markdown("____________________________________________________________")
+
+            #     maxSummons = min(hero1.stats["SumLeft"], hero2.stats["SumLeft"])
+            #     col1.markdown(f"This pair has {maxSummons} summon(s) left")
+
+            #     hero1_summoned =hero1.stats["SumMax"] - hero1.stats["SumLeft"]
+            #     hero2_summoned =hero2.stats["SumMax"] - hero2.stats["SumLeft"]
+
+            #     total_summoning_cost = 0
+            #     for i in range(maxSummons):
+            #         hero1_cost = utils.summoning_cost(hero1.stats["Gen"], hero1_summoned)
+            #         hero1_summoned += 1
+            #         hero2_cost = utils.summoning_cost(hero2.stats["Gen"], hero2_summoned)
+            #         hero2_summoned += 1
+
+            #         summon_cost = hero1_cost + hero2_cost
+            #         total_summoning_cost += summon_cost
+            #         col1.markdown(f"Summon {i+1} = {hero1_cost} + {hero2_cost} = {summon_cost}")
+                
+            #     col1.markdown(f"**Total Summoning Costs   =   {total_summoning_cost}**")
+
+            #     col1.markdown("____________________________________________________________")
+
+            #     total_costs = net_hero_cost + total_summoning_cost
+            #     col1.markdown(f"**Overall Cost   =   {total_costs} Jewels**")
+
             
-            st.button("Calculate")
+            # if st.button("Calculate"):
+            #     with st.cointainer():
+
+            #         col1, col2, col3, col4 = columns((1,1,1,1))
+            #         offspring_EV = 0
+
+            #         col1.markdown("**Main Class**")
+            #         col2.markdown("**Probabiliy**")
+            #         col3.markdown("**Floor Price**")
+            #         col4.markdown("**Class EV (Per Summon)**")
+                    
+            #         for i in range(valid_classes):
+            #             col1.write(valid_classes[i])
+            #             col2.write(offspring.hero_class[key][0])
+            #             col3.write(floor_prices[i])
+            #             col4.write(offspring.hero_class[key][0] * floor_prices[i] * maxSummons)
+            #             offspring_EV += offspring.hero_class[key][0] * floor_prices[i]
+                        
+            #         st.write("EV per summon = " + str(offspring_EV))
+            #         st.write("Max number of summons = " + str(maxSummons))
+            #         st.write("Total Summons EV = " + str(offspring_EV * maxSummons))
+            #         st.write("Total Costs = " + str(total_costs))
+            #         st.markdown(f"**Expected Value = {offspring_EV * maxSummons - total_costs}**")
+                    
+
                     
             st.header("\nCalculation Details")
             with st.container():

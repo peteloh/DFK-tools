@@ -301,3 +301,6 @@ def ideal_class_profession(mainClass):
         "dreadKnight": "mining"
     }
     return ideal_class_profession[mainClass]
+
+def summoning_cost(gen : int, summonUsed : int):
+    return  (6 + gen*10 + 2 * summonUsed)
