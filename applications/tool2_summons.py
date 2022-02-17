@@ -193,14 +193,17 @@ def convert_to_percent(decimal):
 
 def app():
 
+    if 'key' not in st.session_state:
+        st.session_state['key'] = False
+
     st.title('Summoning Guru')
 
     with st.container():
         col1, col2 = st.columns((1,1))
         col1.subheader("Hero 1")
         col2.subheader("Hero 2")
-        hero_id1 = int(col1.text_input("Input",value=118630))
-        hero_id2 = int(col2.text_input("Input",value=105293))
+        hero_id1 = int(col1.text_input("Input",value=128377))
+        hero_id2 = int(col2.text_input("Input",value=121351))
 
         hero1 = hero(hero_id1, rpc_address)
         hero2 = hero(hero_id2, rpc_address)
@@ -283,10 +286,14 @@ def app():
         st.write("Incest is not allowed, please try a different pair of heroes.")
 
     else:
+        
         if st.button('Search'):
+            st.session_state['key'] = True
+
+        if st.session_state['key'] == True:
             
             st.header("Probability")
-            st.subheader("Basic Statistics")
+            st.subheader("Basic")
             with st.container():
 
                 offspring.calculate_genes_probability(df1,df2)
@@ -343,7 +350,7 @@ def app():
             
             st.markdown('#')
 
-            st.subheader("Advanced Statistics")
+            st.subheader("Advanced")
             with st.container():
                 col1, col2, col3, col4, col5 = st.columns((1,1,1,1,1))
 
@@ -400,110 +407,122 @@ def app():
                 col4.markdown("**"+convert_to_percent(total[2])+"**")
                 col5.markdown("**"+convert_to_percent(total[3])+"**")
 
-            # st.markdown('#')
-            # st.subheader("Expected Returns")
-            # with st.container(): 
-            #     col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
-            #     col2.markdown("**Costs**")
-            #     # col2.markdown("** **")
+        st.markdown('#')
 
-            #     col1.markdown("**Potential Rewards**")
-            #     # col4.markdown("** **")
+        if st.session_state['key'] == True:
+            st.subheader("Expected Returns")
+            with st.form("my_form"):
+                with st.container(): 
+                    col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
+                    col2.markdown("**Costs**")
+                    # col2.markdown("** **")
 
-            # with st.container():
-                
-            #     col3, gap, col1, col2, col4 = st.columns((1,0.5,1,1,1))
-            #     valid_classes = []
-            #     floor_prices = []
+                    col1.markdown("**Potential Rewards**")
+                    # col4.markdown("** **")
 
-            #     for key in offspring.hero_class.keys():
-            #         if offspring.hero_class[key][0] != 0:
-            #             valid_classes += [key]
-                
-            #     for c in valid_classes:
-            #         floor_prices += [col3.number_input(f"{c} est. floor price")]
-
-            #     cost_hero1 = col1.number_input(f"Cost of Hero 1")               
-            #     cost_hero2 = col1.number_input(f"Cost of Hero 2")
-
-            #     hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)")
-            #     hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)")
-                
-            #     net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
-
-            #     col1.markdown(f"**Net Hero Cost   =   {net_hero_cost}**")
-
-            #     col1.markdown("____________________________________________________________")
-
-            #     maxSummons = min(hero1.stats["SumLeft"], hero2.stats["SumLeft"])
-            #     col1.markdown(f"This pair has {maxSummons} summon(s) left")
-
-            #     hero1_summoned =hero1.stats["SumMax"] - hero1.stats["SumLeft"]
-            #     hero2_summoned =hero2.stats["SumMax"] - hero2.stats["SumLeft"]
-
-            #     total_summoning_cost = 0
-            #     for i in range(maxSummons):
-            #         hero1_cost = utils.summoning_cost(hero1.stats["Gen"], hero1_summoned)
-            #         hero1_summoned += 1
-            #         hero2_cost = utils.summoning_cost(hero2.stats["Gen"], hero2_summoned)
-            #         hero2_summoned += 1
-
-            #         summon_cost = hero1_cost + hero2_cost
-            #         total_summoning_cost += summon_cost
-            #         col1.markdown(f"Summon {i+1} = {hero1_cost} + {hero2_cost} = {summon_cost}")
-                
-            #     col1.markdown(f"**Total Summoning Costs   =   {total_summoning_cost}**")
-
-            #     col1.markdown("____________________________________________________________")
-
-            #     total_costs = net_hero_cost + total_summoning_cost
-            #     col1.markdown(f"**Overall Cost   =   {total_costs} Jewels**")
-
-            
-            # if st.button("Calculate"):
-            #     with st.cointainer():
-
-            #         col1, col2, col3, col4 = columns((1,1,1,1))
-            #         offspring_EV = 0
-
-            #         col1.markdown("**Main Class**")
-            #         col2.markdown("**Probabiliy**")
-            #         col3.markdown("**Floor Price**")
-            #         col4.markdown("**Class EV (Per Summon)**")
+                with st.container():
                     
-            #         for i in range(valid_classes):
-            #             col1.write(valid_classes[i])
-            #             col2.write(offspring.hero_class[key][0])
-            #             col3.write(floor_prices[i])
-            #             col4.write(offspring.hero_class[key][0] * floor_prices[i] * maxSummons)
-            #             offspring_EV += offspring.hero_class[key][0] * floor_prices[i]
-                        
-            #         st.write("EV per summon = " + str(offspring_EV))
-            #         st.write("Max number of summons = " + str(maxSummons))
-            #         st.write("Total Summons EV = " + str(offspring_EV * maxSummons))
-            #         st.write("Total Costs = " + str(total_costs))
-            #         st.markdown(f"**Expected Value = {offspring_EV * maxSummons - total_costs}**")
+                    col3, gap, col1, col2, col4 = st.columns((1,0.5,1,1,1))
+                    valid_classes = []
+                    floor_prices = []
+
+                    for key in offspring.hero_class.keys():
+                        if offspring.hero_class[key][0] != 0:
+                            valid_classes += [key]
                     
+                    for c in valid_classes:
+                        floor_prices += [col3.number_input(f"{c} est. floor price", value=45)]
+
+                    cost_hero1 = col1.number_input(f"Cost of Hero 1", value=200)               
+                    cost_hero2 = col1.number_input(f"Cost of Hero 2", value=200)
+
+                    hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)",value=45)
+                    hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)",value=45)
+                    
+                    net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
+
+                    col1.markdown(f"**Net Hero Cost   =   {net_hero_cost}**")
+
+                    col1.markdown("____________________________________________________________")
+
+                    maxSummons = min(hero1.stats["SumLeft"], hero2.stats["SumLeft"])
+                    col1.markdown(f"This pair has {maxSummons} summon(s) left")
+
+                    hero1_summoned =hero1.stats["SumMax"] - hero1.stats["SumLeft"]
+                    hero2_summoned =hero2.stats["SumMax"] - hero2.stats["SumLeft"]
+
+                    total_summoning_cost = 0
+                    for i in range(maxSummons):
+                        hero1_cost = utils.summoning_cost(hero1.stats["Gen"], hero1_summoned)
+                        hero1_summoned += 1
+                        hero2_cost = utils.summoning_cost(hero2.stats["Gen"], hero2_summoned)
+                        hero2_summoned += 1
+
+                        summon_cost = hero1_cost + hero2_cost
+                        total_summoning_cost += summon_cost
+                        col1.markdown(f"Summon {i+1} = {hero1_cost} + {hero2_cost} = {summon_cost}")
+                    
+                    col1.markdown(f"**Total Summoning Costs   =   {total_summoning_cost}**")
+
+                    col1.markdown("____________________________________________________________")
+
+                    total_costs = net_hero_cost + total_summoning_cost
+                    col1.markdown(f"**Overall Cost   =   {total_costs} Jewels**")
 
                     
-            st.header("\nCalculation Details")
-            with st.container():
+                    # Every form must have a submit button.
+                    submitted = st.form_submit_button("Calculate")
+                    if submitted:
+                        with st.container():
 
-                st.markdown("""
-                1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
-                2. Weighting of each genes: 
-                    D0 - 75%
-                    R1 - 18.75%
-                    R2 - 4.6875%
-                    R3 - 1.5625%
-                3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight
-                """)
+                            st.markdown("#")
 
-                st.markdown("""
-                For advanced probabilities, 4 main scenarios were considered:
-                1. Main Class match with profession and 2 stat boost
-                2. Main Class match with profession and 1 stat boost
-                3. Main Class match with profession and 0 stat boost
-                4. Main Class not match with profession.
-                """)
+                            col1, col2, col3, col4 = st.columns((1,1,1,1))
+                            offspring_EV = 0
+                            
+                            col1.markdown("**Main Class**")
+                            col2.markdown("**Probability**")
+                            col3.markdown("**Est. Price**")
+                            col4.markdown("**EV Per Summon**")
+
+                            for i in range(len(valid_classes)):
+                                col1.text(valid_classes[i])
+                                col2.text(convert_to_percent(offspring.hero_class[valid_classes[i]][0]))
+                                col3.text(str(floor_prices[i]))
+                                col4.text(str(offspring.hero_class[valid_classes[i]][0] * floor_prices[i] * maxSummons))
+                                offspring_EV += offspring.hero_class[valid_classes[i]][0] * floor_prices[i]
+                                
+                            st.markdown("#")
+                            st.subheader("Final Calculations")
+                            st.write("EV per summon = " + str(offspring_EV))
+                            st.write("Max number of summons = " + str(maxSummons))
+                            st.write("Total Summons EV = " + str(offspring_EV * maxSummons))
+                            st.write("Total Costs = " + str(total_costs))
+                            st.markdown(f"**Expected Returns = {offspring_EV * maxSummons - total_costs}**")
+                    
+
+                    
+        st.header("\nCalculation Details")
+        with st.container():
+
+            st.markdown("""
+            **Basic Probabilities**
+            1. Summoned hero has 50/50 chance to get each parent genes (D0, R1, R2, R3)
+            2. Weighting of each genes: 
+                D0 - 75%
+                R1 - 18.75%
+                R2 - 4.6875%
+                R3 - 1.5625%
+            3. If parent genes match, 25% mutation chance into higher tier class, halved for DreadKnight \n
+            """)
+
+            st.markdown("""
+            **Advanced Probabilities** \n
+            The following scenarios were considered,:
+            1. Main Class match with profession and 2 stat boost
+            2. Main Class match with profession and 1 stat boost
+            3. Main Class match with profession and 0 stat boost
+            4. Main Class not match with profession.
+            The probabiliy for each scenario and offspring class is calculated using outcome from Basic Probabilities \n
+            """)
     
