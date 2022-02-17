@@ -7,6 +7,16 @@ from core import hero_core, utils
 
 rpc_address = "https://api.harmony.one"
 
+DEFAULT_INPUTS = {
+    "hero1": 128377,
+    "hero2": 121351,
+    "hero1_purchase": 140,
+    "hero2_purchase": 120,
+    "hero1_sales": 100,
+    "hero2_sales": 50,
+    "default_floor_price": 50
+}
+
 class hero:
     def __init__(self, heroId, rpc_address):
         raw_details = hero_core.get_hero(heroId, rpc_address)
@@ -202,8 +212,8 @@ def app():
         col1, col2 = st.columns((1,1))
         col1.subheader("Hero 1")
         col2.subheader("Hero 2")
-        hero_id1 = int(col1.text_input("Input",value=128377))
-        hero_id2 = int(col2.text_input("Input",value=121351))
+        hero_id1 = int(col1.text_input("Input",value=DEFAULT_INPUTS['hero1']))
+        hero_id2 = int(col2.text_input("Input",value=DEFAULT_INPUTS['hero2']))
 
         hero1 = hero(hero_id1, rpc_address)
         hero2 = hero(hero_id2, rpc_address)
@@ -412,6 +422,7 @@ def app():
         if st.session_state['key'] == True:
             st.subheader("Expected Returns")
             with st.form("my_form"):
+                st.write("Please fill in this form then press 'Calculate'")
                 with st.container(): 
                     col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
                     col2.markdown("**Costs**")
@@ -431,13 +442,13 @@ def app():
                             valid_classes += [key]
                     
                     for c in valid_classes:
-                        floor_prices += [col3.number_input(f"{c} est. floor price", value=45)]
+                        floor_prices += [col3.number_input(f"{c} est. floor price", value=DEFAULT_INPUTS['default_floor_price'])]
 
-                    cost_hero1 = col1.number_input(f"Cost of Hero 1", value=200)               
-                    cost_hero2 = col1.number_input(f"Cost of Hero 2", value=200)
+                    cost_hero1 = col1.number_input(f"Cost of Hero 1", value=DEFAULT_INPUTS['hero1_purchase'])               
+                    cost_hero2 = col1.number_input(f"Cost of Hero 2", value=DEFAULT_INPUTS['hero2_purchase'])
 
-                    hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)",value=45)
-                    hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)",value=45)
+                    hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)",value=DEFAULT_INPUTS['hero1_sales'])
+                    hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)",value=DEFAULT_INPUTS['hero2_sales'])
                     
                     net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
 
