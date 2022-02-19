@@ -142,6 +142,10 @@ class summon:
         }
 
     def check_same_grandparents(self, hero1, hero2):
+        hero1_ID = hero1.details["id"]
+        hero2_ID = hero1.details["id"]
+        if hero1.stats["Gen"] == 0 and hero2.stats["Gen"] == 0: return False
+
         hero1_parents = [hero1.details['summoningInfo']['summonerId'], hero1.details['summoningInfo']['assistantId']]
         hero2_parents = [hero2.details['summoningInfo']['summonerId'], hero2.details['summoningInfo']['assistantId']]
         return (hero1_parents[0] in hero2_parents) and (hero1_parents[1] in hero2_parents)
@@ -149,6 +153,8 @@ class summon:
     def check_is_parent_child(self, hero1, hero2):
         hero1_ID = hero1.details["id"]
         hero2_ID = hero1.details["id"]
+        if hero1.stats["Gen"] == 0 and hero2.stats["Gen"] == 0: return False
+
         hero1_parents = [hero1.details['summoningInfo']['summonerId'], hero1.details['summoningInfo']['assistantId']]
         hero2_parents = [hero2.details['summoningInfo']['summonerId'], hero2.details['summoningInfo']['assistantId']]
         if hero1_parents[0] == hero2_ID or hero1_parents[1] == hero2_ID: 
@@ -294,6 +300,8 @@ def app():
 
     if offspring.check_same_grandparents(hero1, hero2) == True or offspring.check_is_parent_child(hero1, hero2) == True:
         st.write("Incest is not allowed, please try a different pair of heroes.")
+    elif hero1.details["id"] == hero2.details["id"]:
+        st.write("Asexual reproduction is not possible, please try a different pair of heroes.")
 
     else:
         
@@ -420,96 +428,99 @@ def app():
         st.markdown('#')
 
         if st.session_state['key'] == True:
-            st.subheader("Expected Returns")
-            with st.form("my_form"):
-                st.write("Please fill in this form then press 'Calculate'")
-                with st.container(): 
-                    col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
-                    col2.markdown("**Costs**")
-                    # col2.markdown("** **")
+            st.subheader("Expected Returns (Beta)")
+            if hero1.stats['Gen'] == 0 or hero1.stats['Gen'] == 0:
+                st.write("Currently not supported for pairs invloving Gen0 Heroes")
+            else:
+                with st.form("my_form"):
+                    st.write("Please fill in this form then press 'Calculate'")
+                    with st.container(): 
+                        col1, gap, col2, col3, col4 = st.columns((1,0.5,1,1,1))
+                        col2.markdown("**Costs**")
+                        # col2.markdown("** **")
 
-                    col1.markdown("**Potential Rewards**")
-                    # col4.markdown("** **")
+                        col1.markdown("**Potential Rewards**")
+                        # col4.markdown("** **")
 
-                with st.container():
-                    
-                    col3, gap, col1, col2, col4 = st.columns((1,0.5,1,1,1))
-                    valid_classes = []
-                    floor_prices = []
+                    with st.container():
+                        
+                        col3, gap, col1, col2, col4 = st.columns((1,0.5,1,1,1))
+                        valid_classes = []
+                        floor_prices = []
 
-                    for key in offspring.hero_class.keys():
-                        if offspring.hero_class[key][0] != 0:
-                            valid_classes += [key]
-                    
-                    for c in valid_classes:
-                        floor_prices += [col3.number_input(f"{c} est. floor price", value=DEFAULT_INPUTS['default_floor_price'])]
+                        for key in offspring.hero_class.keys():
+                            if offspring.hero_class[key][0] != 0:
+                                valid_classes += [key]
+                        
+                        for c in valid_classes:
+                            floor_prices += [col3.number_input(f"{c} est. floor price", value=DEFAULT_INPUTS['default_floor_price'])]
 
-                    cost_hero1 = col1.number_input(f"Cost of Hero 1", value=DEFAULT_INPUTS['hero1_purchase'])               
-                    cost_hero2 = col1.number_input(f"Cost of Hero 2", value=DEFAULT_INPUTS['hero2_purchase'])
+                        cost_hero1 = col1.number_input(f"Cost of Hero 1", value=DEFAULT_INPUTS['hero1_purchase'])               
+                        cost_hero2 = col1.number_input(f"Cost of Hero 2", value=DEFAULT_INPUTS['hero2_purchase'])
 
-                    hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)",value=DEFAULT_INPUTS['hero1_sales'])
-                    hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)",value=DEFAULT_INPUTS['hero2_sales'])
-                    
-                    net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
+                        hero1_sale = col2.number_input(f"Sale Price Hero 1 (0 Summon)",value=DEFAULT_INPUTS['hero1_sales'])
+                        hero2_sale = col2.number_input(f"Sale Price Hero 2 (0 Summon)",value=DEFAULT_INPUTS['hero2_sales'])
+                        
+                        net_hero_cost = cost_hero1 + cost_hero2 - hero1_sale - hero2_sale
 
-                    col1.markdown(f"**Net Hero Cost   =   {net_hero_cost}**")
+                        col1.markdown(f"**Net Hero Cost   =   {net_hero_cost}**")
 
-                    col1.markdown("____________________________________________________________")
+                        col1.markdown("____________________________________________________________")
 
-                    maxSummons = min(hero1.stats["SumLeft"], hero2.stats["SumLeft"])
-                    col1.markdown(f"This pair has {maxSummons} summon(s) left")
+                        maxSummons = min(hero1.stats["SumLeft"], hero2.stats["SumLeft"])
+                        col1.markdown(f"This pair has {maxSummons} summon(s) left")
 
-                    hero1_summoned =hero1.stats["SumMax"] - hero1.stats["SumLeft"]
-                    hero2_summoned =hero2.stats["SumMax"] - hero2.stats["SumLeft"]
+                        hero1_summoned =hero1.stats["SumMax"] - hero1.stats["SumLeft"]
+                        hero2_summoned =hero2.stats["SumMax"] - hero2.stats["SumLeft"]
 
-                    total_summoning_cost = 0
-                    for i in range(maxSummons):
-                        hero1_cost = utils.summoning_cost(hero1.stats["Gen"], hero1_summoned)
-                        hero1_summoned += 1
-                        hero2_cost = utils.summoning_cost(hero2.stats["Gen"], hero2_summoned)
-                        hero2_summoned += 1
+                        total_summoning_cost = 0
+                        for i in range(maxSummons):
+                            hero1_cost = utils.summoning_cost(hero1.stats["Gen"], hero1_summoned)
+                            hero1_summoned += 1
+                            hero2_cost = utils.summoning_cost(hero2.stats["Gen"], hero2_summoned)
+                            hero2_summoned += 1
 
-                        summon_cost = hero1_cost + hero2_cost
-                        total_summoning_cost += summon_cost
-                        col1.markdown(f"Summon {i+1} = {hero1_cost} + {hero2_cost} = {summon_cost}")
-                    
-                    col1.markdown(f"**Total Summoning Costs   =   {total_summoning_cost}**")
+                            summon_cost = hero1_cost + hero2_cost
+                            total_summoning_cost += summon_cost
+                            col1.markdown(f"Summon {i+1} = {hero1_cost} + {hero2_cost} = {summon_cost}")
+                        
+                        col1.markdown(f"**Total Summoning Costs   =   {total_summoning_cost}**")
 
-                    col1.markdown("____________________________________________________________")
+                        col1.markdown("____________________________________________________________")
 
-                    total_costs = net_hero_cost + total_summoning_cost
-                    col1.markdown(f"**Overall Cost   =   {total_costs} Jewels**")
+                        total_costs = net_hero_cost + total_summoning_cost
+                        col1.markdown(f"**Overall Cost   =   {total_costs} Jewels**")
 
-                    
-                    # Every form must have a submit button.
-                    submitted = st.form_submit_button("Calculate")
-                    if submitted:
-                        with st.container():
+                        
+                        # Every form must have a submit button.
+                        submitted = st.form_submit_button("Calculate")
+                        if submitted:
+                            with st.container():
 
-                            st.markdown("#")
+                                st.markdown("#")
 
-                            col1, col2, col3, col4 = st.columns((1,1,1,1))
-                            offspring_EV = 0
-                            
-                            col1.markdown("**Main Class**")
-                            col2.markdown("**Probability**")
-                            col3.markdown("**Est. Price**")
-                            col4.markdown("**EV Per Summon**")
-
-                            for i in range(len(valid_classes)):
-                                col1.text(valid_classes[i])
-                                col2.text(convert_to_percent(offspring.hero_class[valid_classes[i]][0]))
-                                col3.text(str(floor_prices[i]))
-                                col4.text(str(offspring.hero_class[valid_classes[i]][0] * floor_prices[i] * maxSummons))
-                                offspring_EV += offspring.hero_class[valid_classes[i]][0] * floor_prices[i]
+                                col1, col2, col3, col4 = st.columns((1,1,1,1))
+                                offspring_EV = 0
                                 
-                            st.markdown("#")
-                            st.subheader("Final Calculations")
-                            st.write("EV per summon = " + str(offspring_EV))
-                            st.write("Max number of summons = " + str(maxSummons))
-                            st.write("Total Summons EV = " + str(offspring_EV * maxSummons))
-                            st.write("Total Costs = " + str(total_costs))
-                            st.markdown(f"**Expected Returns = {offspring_EV * maxSummons - total_costs}**")
+                                col1.markdown("**Main Class**")
+                                col2.markdown("**Probability**")
+                                col3.markdown("**Est. Price**")
+                                col4.markdown("**EV Per Summon**")
+
+                                for i in range(len(valid_classes)):
+                                    col1.text(valid_classes[i])
+                                    col2.text(convert_to_percent(offspring.hero_class[valid_classes[i]][0]))
+                                    col3.text(str(floor_prices[i]))
+                                    col4.text(str(offspring.hero_class[valid_classes[i]][0] * floor_prices[i] * maxSummons))
+                                    offspring_EV += offspring.hero_class[valid_classes[i]][0] * floor_prices[i]
+                                    
+                                st.markdown("#")
+                                st.subheader("Final Calculations")
+                                st.write("EV per summon = " + str(offspring_EV))
+                                st.write("Max number of summons = " + str(maxSummons))
+                                st.write("Total Summons EV = " + str(offspring_EV * maxSummons))
+                                st.write("Total Costs = " + str(total_costs))
+                                st.markdown(f"**Expected Returns = {offspring_EV * maxSummons - total_costs}**")
                     
 
                     

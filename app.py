@@ -25,7 +25,7 @@ st.sidebar.title("DFK Tools")
 app.add_page("Summoning Guru", tool2_summons.app)
 app.add_page("Heroes Tracker", tool1_heroes.app)
 app.add_page("Recent Hero Sales", tool3_check_sales.app)
-app.add_page("Analytics", tool4_database.app)
+# app.add_page("Analytics", tool4_database.app)
 
 # The main app
 app.run()
